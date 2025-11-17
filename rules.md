@@ -758,32 +758,9 @@ TOKEN消耗：约X K
 
 ## 标识符过滤规则
 
-信息胶囊中包含大量内部管理标识符（如CHAR-001、LOC-003等），这些是为SOP管理设计的，对Claude的创作无实际价值。
+信息胶囊中可能包含大量内部管理标识符（如CHAR-001、LOC-003等），这些是为SOP管理设计的，对Claude的创作无实际价值。
 
 **Claude无需关注。**
-
-**自动过滤的标识符（ID标识表）：**
-
-- [角色] CHAR-001 ~ CHAR-XXX 
-- [组织] ORG-001 ~ ORG-XXX 
-- [道具] ITEM-001 ~ ITEM-XXX 
-- [技能] SKILL-001 ~ SKILL-XXX 
-- [地点] LOC-001 ~ LOC-XXX 
-- [资源] RES-001 ~ RES-XXX 
-- [境界] REALM-001 ~ REALM-XXX
-- [功法] GONGFA-001 ~ GONGFA-XXX 
-- [事件] EVENT-001 ~ EVENT-XXX 
-- [因果] KARMA-001 ~ KARMA-XXX
-- [系统] SYS-001 ~ SYS-XXX 
-- [主线] M-001 ~ M-XXX 
-- [支线] S-001 ~ S-XXX 
-- [伏笔] Hook-001 ~ Hook-XXX 
-- [Bug] BUG-001 ~ BUG-XXX
-
-**保留有价值的标识符：**
-- Facts编号：Fact-XXX（用于第三阶段检查）
-- 世界观引用：Static §X.X（用于查询设定）
-- SOP标注：（SOP推演）（识别导演意图）
 
 **执行方式：**
 阅读时自动"心理过滤"这些标识符，就像阅读时跳过错别字一样自然，无需刻意"忽略"动作。
