@@ -6,14 +6,14 @@
 
 ```python
 # ==================== 全局常量 ====================
-CONST WORD_COUNT_TARGET = 4000  # 目标字数
-CONST WORD_COUNT_MIN = 3000     # 最小字数（硬约束）
+CONST WORD_COUNT_TARGET = 3000  # 目标字数
+CONST WORD_COUNT_MIN = 2000     # 最小字数（硬约束）
 CONST WORD_COUNT_MAX = 6000     # 最大字数（硬约束）
 CONST MAX_REWRITE_ATTEMPTS = 2  # 最大重写次数
 
 CONST SCENE_WORD_MIN = 300      # 单场景最小字数
 CONST SCENE_WORD_MAX = 1200     # 单场景最大字数
-CONST SCENE_WORD_AVG = 800      # 单场景平均字数
+CONST SCENE_WORD_AVG = 750      # 单场景平均字数
 
 # ==================== 番茄风格核心规则 ====================
 CONST TOMATO_CORE_RULES = {
@@ -1853,7 +1853,7 @@ FUNCTION GENERATE_FIX_INSTRUCTION(problem_analysis):
             CASE "内容过度展开":
                 fix_instruction.must_do.APPEND("压缩次要场景至300-500字")
                 fix_instruction.must_avoid.APPEND("过度描写环境和细节")
-                fix_instruction.target_adjustments["max_scene_words"] = 800
+                fix_instruction.target_adjustments["max_scene_words"] = 750
             
             CASE "遗漏关键情节":
                 fix_instruction.must_do.APPEND("补充核心任务相关场景")
@@ -3100,8 +3100,8 @@ END IF
 ## 【附录】快速参考
 
 ### 核心常量
-- `WORD_COUNT_TARGET`: 4000字
-- `SCENE_WORD_AVG`: 800字/场景
+- `WORD_COUNT_TARGET`: 3000字
+- `SCENE_WORD_AVG`: 750字/场景
 - `TOMATO_CORE_RULES.dialogue_ratio`: [0.35, 0.45]
 - `TOMATO_CORE_RULES.inner_monologue_max`: 0.15
 - `MAX_REWRITE_ATTEMPTS`: 2次
