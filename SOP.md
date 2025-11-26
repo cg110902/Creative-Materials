@@ -8,7 +8,7 @@
 # ==================== 全局常量 ====================
 CONST WORD_COUNT_TARGET = 3000  # 目标字数
 CONST WORD_COUNT_MIN = 2000     # 最小字数（硬约束）
-CONST WORD_COUNT_MAX = 6000     # 最大字数（硬约束）
+CONST WORD_COUNT_MAX = 10000     # 最大字数（硬约束）
 CONST MAX_REWRITE_ATTEMPTS = 2  # 最大重写次数
 
 CONST SCENE_WORD_MIN = 300      # 单场景最小字数
