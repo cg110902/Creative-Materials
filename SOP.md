@@ -2,9 +2,8 @@
 
 ---
 
-# ⚠️ 【元层协议】请Claude在执行任何任务前先阅读本节 ⚠️
 
-# ⚠️ 【元层协议 META-PROTOCOL】⚠️
+# ⚠️ 【元层协议 META-PROTOCOL】⚠请Claude在执行任何任务前先阅读本节 ⚠️
 
 **致Claude：在执行任何写作任务前，必须先阅读并确认以下协议**
 
@@ -24,10 +23,10 @@ END IF
 ### 2️⃣ 字数范围是容错区，不是目标线
 ```python
 WORD_COUNT_MIN = 2000  # 低于此值 → CRITICAL错误
-WORD_COUNT_MAX = 10000  # 高于此值 → CRITICAL错误
-WORD_COUNT_TARGET = 3000  # 这只是参考值
+WORD_COUNT_MAX = 6000  # 高于此值 → CRITICAL错误
+WORD_COUNT_TARGET = 2000  # 这只是参考值
 ```
-❌ **禁止**："写到2500字担心超标，提前收尾"  
+❌ **禁止**："写到2000字担心超标，提前收尾"  
 ✅ **正确**："写到5000字也可以，让诊断模块决定是否需要调整"
 
 ### 3️⃣ 疯狂分支优先级 > 平庸路径
@@ -50,47 +49,6 @@ END IF
 ```
 ❌ **禁止**："对话占比28%，但我说'为保持紧凑，适当调整'"  
 ✅ **正确**："对话占比28%，严重低于目标35-45%，需要重写"
-
----
-
-## 🟡 IMPORTANT - 番茄风格硬约束
-
-| 指标 | 最低线 | 目标区间 | 检查频率 |
-|------|--------|----------|----------|
-| 对话占比 | 25% | 35-45% | **每个场景** |
-| 信息密度 | 0.008 | 0.01-0.015 | **每个场景** |
-| 冲突间隔 | 800字 | <600字 | 全局 |
-| 段落长度 | - | <150字 | 润色时 |
-
-**场景写作时的自检清单：**
-- [ ] 这个场景的对话占比是否≥30%？
-- [ ] 这个场景是否至少有1个小冲突/小波折？
-- [ ] 如果这个场景字数>1000，是否应该拆分为2个？
-
----
-
-## 🟢 RECOMMENDED - 资源与设定锚定
-
-### 资源清单是硬约束
-```python
-BEFORE USING RESOURCE:
-    IF resource NOT IN parsed_data.resources:
-        THROW ERROR("凭空变出资源")
-    END IF
-END BEFORE
-```
-
-**示例（本次执行中我的错误）：**
-- ❌ 文中写"陈平掏出辟谷丹"，但没检查§11是否有辟谷丹
-- ✅ 写之前先查§11："辟谷丹 x 3颗（劣质）" → OK，可以写
-
-### 数据锚点必须量化展示
-```python
-IF parsed_data.world.CONTAINS("法力总量30滴"):
-    在施法场景中，必须至少提及1次具体消耗量
-    例如："这一诀耗去五滴法力，丹田又空了六分之一"
-END IF
-```
 
 ---
 
@@ -150,9 +108,6 @@ END IF
 
 这是一个**高度参数化的工程写作任务**，作者已经通过信息胶囊给出了明确的规格说明书。你的任务是**精确执行**，而不是"艺术再创作"。
 
-SOP v3.1的设计哲学是：
-- **"只给起点和边界，路径让角色自己走"** ← 这是留给角色的自由度
-- **"番茄风格硬约束"** ← 这是留给Claude的执行标准
 
 请记住：
 - 任务清单不是建议，是**必须完成的工程指标**
@@ -221,7 +176,7 @@ SOP v3.1的设计哲学是：
 ## ✅ POST-FLIGHT CHECKLIST（降落后检查）
 
 ### 核心指标
-- [ ] 总字数是否在3000-6000之间？
+- [ ] 总字数是否在2000-6000之间？
 - [ ] 对话占比是否在35-45%之间？
 - [ ] 核心任务是否100%完成？
 - [ ] 绝对红线是否100%遵守？
@@ -249,7 +204,7 @@ SOP v3.1的设计哲学是：
 1. **误区1**："任务清单是建议"  
    → 纠正：priority=="MUST"的任务是**工程指标**，必须完成
    
-2. **误区2**："写到2500字就该收尾了"  
+2. **误区2**："写到2000字就该收尾了"  
    → 纠正：字数上限是6000，你有足够的空间
    
 3. **误区3**："这个疯狂分支太难写，我选平庸版"  
@@ -269,7 +224,6 @@ SOP v3.1的设计哲学是：
 **日期：**每次执行MAIN_EXECUTION前
 
 
-
 ---
 
 ## 🛡️ 防止"假修复"协议
@@ -284,7 +238,7 @@ SOP v3.1的设计哲学是：
    - 真实问题：对话质量和数量仍然不足
    
 2. **局部修补**：
-   - 诊断：字数不足3000字
+   - 诊断：字数不足2000字
    - 假修复：在结尾加了300字注水内容
    - 真实问题：缺少完整场景，不是缺文字
 
@@ -396,9 +350,6 @@ FUNCTION VERIFY_FIX_QUALITY(before, after, issue):
     END SWITCH
 END FUNCTION
 ```
-
----
-
 
 ---
 
@@ -518,9 +469,9 @@ END FUNCTION
 
 ```python
 # ==================== 全局常量 ====================
-CONST WORD_COUNT_TARGET = 3000  # 目标字数
+CONST WORD_COUNT_TARGET = 2000  # 目标字数
 CONST WORD_COUNT_MIN = 2000     # 最小字数
-CONST WORD_COUNT_MAX = 10000     # 最大字数
+CONST WORD_COUNT_MAX = 6000     # 最大字数
 CONST MAX_REWRITE_ATTEMPTS = 2  # 最大重写次数
 
 CONST SCENE_WORD_MIN = 300      # 单场景最小字数
@@ -567,7 +518,7 @@ CONST CLAUDE_ALL20_DISEASES = {
 # ==================== 病症检测权重 ====================
 CONST DISEASE_WEIGHTS = {
     "D1_过度展开": 1.0,
-    "D2_过度解释": 1.0,
+    "D2_过度解释": 1.5,      # 严重违反，加权
     "D3_过度内心戏": 1.5,      # 严重违反，加权
     "D4_过度安全": 0.8,
     "D5_过度冗余": 1.2,
@@ -689,7 +640,7 @@ FUNCTION MAIN_EXECUTION(CAPSULE, existing_humanizer=NULL):
     PRINT "[META] 请确认您已阅读§0A-§0B元层协议"
     PRINT "[META] 本次执行将严格遵守以下原则："
     PRINT "  1. 任务清单MUST项 → 100%执行"
-    PRINT "  2. 字数范围 → 3000-6000（不提前收尾）"
+    PRINT "  2. 字数范围 → 2000-6000（不提前收尾）"
     PRINT "  3. 疯狂分支 → 优先采用"
     PRINT "  4. 诊断报告 → 诚实汇报"
     
@@ -1134,7 +1085,7 @@ END FUNCTION
 ```python
 FUNCTION WRITE_SCENE_V3(scene_idx, parsed_data, humanizer, previous_content):
     """
-    写作单个场景（v3修复版）
+    写作单个场景（v3版本）
     核心改进：执行任务清单，而非概率决策
     """
     
@@ -1282,7 +1233,7 @@ FUNCTION WRITE_UNIT_BY_TYPE(unit, expansion_level, parsed_data):
 END FUNCTION
 
 FUNCTION EXECUTE_HUMANIZE_TASK(scene_text, task, parsed_data):
-    """执行拟人化任务（修复版：边界条件处理）"""
+    """执行拟人化任务（边界条件处理）"""
     
     SWITCH task.type:
         CASE "跳跃切入":
@@ -1305,7 +1256,7 @@ END FUNCTION
 
 FUNCTION REMOVE_FIRST_N_SENTENCES_SAFE(scene_text, n, parsed_data):
     """
-    安全地删除前N句（修复版：检查关键信息）
+    安全地删除前N句（检查关键信息）
     """
     sentences = SPLIT_SENTENCES(scene_text)
     
@@ -1334,7 +1285,7 @@ END FUNCTION
 
 FUNCTION REMOVE_ONE_MOTIVATION(scene_text, target_keywords):
     """
-    删除一个动机解释（修复版：明确定位）
+    删除一个动机解释（明确定位）
     """
     IF LENGTH(target_keywords) == 0:
         target_keywords = ["因为", "为了", "想要", "之所以"]
@@ -1367,7 +1318,7 @@ END FUNCTION
 
 FUNCTION EXPAND_MINOR_ELEMENT(scene_text, target_length, parsed_data):
     """
-    扩展次要元素描写（修复版：明确识别）
+    扩展次要元素描写（明确识别）
     """
     # 提取所有名词
     nouns = EXTRACT_NOUNS(scene_text)
@@ -1415,7 +1366,7 @@ END FUNCTION
 ```python
 FUNCTION APPLY_ALL_ANTI_DISEASE_RULES(chapter_content, parsed_data):
     """
-    集中应用所有反Claude病规则（修复版：加权处理）
+    集中应用所有反Claude病规则（加权处理）
     在润色阶段统一处理，而非分散在写作过程中
     """
     
@@ -1544,7 +1495,7 @@ END FUNCTION
 # ==================== 具体实现函数====================
 
 FUNCTION REPLACE_EMOTION_WORDS_WITH_PHYSIOLOGY(text):
-    """替换情绪词为生理反应（修复版：返回计数）"""
+    """替换情绪词为生理反应（返回计数）"""
     emotion_map = {
         "震惊": ["瞳孔骤然收缩", "呼吸一滞", "僵在原地"],
         "恐惧": ["后背发凉", "腿发软", "冷汗浸透后背"],
@@ -1593,7 +1544,7 @@ FUNCTION REPLACE_EMOTION_WORDS_WITH_PHYSIOLOGY(text):
 END FUNCTION
 
 FUNCTION SIMPLIFY_ACTION_CHAINS(text):
-    """简化动作链（修复版：返回计数）"""
+    """简化动作链（返回计数）"""
     # 匹配模式：连续4个以上动作，用"然后/接着/，"连接
     pattern = r"(他|她|\\w{2,4})(\\w{2,5})(，|然后|接着)(\\w{2,5})(，|然后|接着)(\\w{2,5})(，|然后|接着)(\\w{2,5})"
     
@@ -1624,7 +1575,7 @@ FUNCTION SIMPLIFY_ACTION_CHAINS(text):
 END FUNCTION
 
 FUNCTION REMOVE_PARAGRAPH_SUMMARIES(text):
-    """删除段落总结句（修复版：返回计数）"""
+    """删除段落总结句（返回计数）"""
     paragraphs = SPLIT_PARAGRAPHS(text)
     remove_count = 0
     
@@ -1668,7 +1619,7 @@ FUNCTION REMOVE_PARAGRAPH_SUMMARIES(text):
 END FUNCTION
 
 FUNCTION COMPRESS_LONG_PARAGRAPHS(text, max_length):
-    """压缩过长段落（修复版：返回计数）"""
+    """压缩过长段落（返回计数）"""
     paragraphs = SPLIT_PARAGRAPHS(text)
     compress_count = 0
     
@@ -1689,7 +1640,7 @@ FUNCTION COMPRESS_LONG_PARAGRAPHS(text, max_length):
 END FUNCTION
 
 FUNCTION REDUCE_INNER_MONOLOGUE(text, max_ratio):
-    """减少内心戏（修复版：返回计数）"""
+    """减少内心戏（返回计数）"""
     inner_ratio = CALCULATE_INNER_MONOLOGUE_RATIO(text)
     
     IF inner_ratio <= max_ratio:
@@ -1714,7 +1665,7 @@ FUNCTION REDUCE_INNER_MONOLOGUE(text, max_ratio):
 END FUNCTION
 
 FUNCTION REMOVE_REDUNDANCY(text):
-    """删除同一意思的重复表达（修复版：语义判断）"""
+    """删除同一意思的重复表达（语义判断）"""
     paragraphs = SPLIT_PARAGRAPHS(text)
     remove_count = 0
     
@@ -1780,7 +1731,7 @@ FUNCTION OPTIMIZE_SENTENCE_LENGTH(text):
 END FUNCTION
 
 FUNCTION REMOVE_EXPLANATORY_THOUGHTS(text):
-    """删除解释性内心戏（修复版：返回计数）"""
+    """删除解释性内心戏（包含但不限于以下类型）"""
     explanatory_patterns = [
         "他这样做是因为",
         "她之所以",
@@ -1805,7 +1756,7 @@ FUNCTION REMOVE_EXPLANATORY_THOUGHTS(text):
 END FUNCTION
 
 FUNCTION COMPRESS_SETUP(text):
-    """压缩过度铺垫（修复版：返回计数）"""
+    """压缩过度铺垫（返回计数）"""
     paragraphs = SPLIT_PARAGRAPHS(text)
     compress_count = 0
     
@@ -1830,7 +1781,7 @@ FUNCTION COMPRESS_SETUP(text):
 END FUNCTION
 
 FUNCTION REMOVE_TRANSITIONS(text):
-    """删除过渡句（修复版：返回计数）"""
+    """删除过渡句（返回计数）"""
     transition_patterns = [
         r"过了.{1,5}(时间|分钟|小时|天|月)",
         r"(他|她|\\w{2,4}).{0,5}(走到|来到|到了).{2,10}",
@@ -1858,7 +1809,7 @@ FUNCTION REMOVE_TRANSITIONS(text):
 END FUNCTION
 
 FUNCTION REMOVE_CAUSALITY_EXPLANATION(text):
-    """删除因果解释（修复版：返回计数）"""
+    """删除因果解释（返回计数）"""
     causality_patterns = [
         r"因为.{5,30}所以",
         r"之所以.{5,30}是因为",
@@ -1886,7 +1837,7 @@ FUNCTION REMOVE_CAUSALITY_EXPLANATION(text):
 END FUNCTION
 
 FUNCTION BREAK_SCENE_STRUCTURE(text):
-    """打破场景完整结构（修复版：返回计数）"""
+    """打破场景完整结构（返回计数）"""
     scenes = DETECT_SCENES(text)
     break_count = 0
     
@@ -1908,7 +1859,7 @@ FUNCTION BREAK_SCENE_STRUCTURE(text):
 END FUNCTION
 
 FUNCTION ADD_CONVERSATIONAL_ROUGHNESS(text):
-    """增加对话的"粗糙感"（修复版：返回计数）"""
+    """增加对话的"粗糙感"（返回计数）"""
     dialogues = EXTRACT_ALL_DIALOGUES(text)
     modify_count = 0
     
@@ -1952,7 +1903,7 @@ FUNCTION ADD_CONVERSATIONAL_ROUGHNESS(text):
 END FUNCTION
 
 FUNCTION COMPRESS_LOW_DENSITY_PARAGRAPHS(text):
-    """压缩低信息密度段落（修复版：返回计数）"""
+    """压缩低信息密度段落（返回计数）"""
     paragraphs = SPLIT_PARAGRAPHS(text)
     compress_count = 0
     
@@ -1984,7 +1935,7 @@ FUNCTION COMPRESS_LOW_DENSITY_PARAGRAPHS(text):
 END FUNCTION
 
 FUNCTION FIX_POV_SHIFTS(text, protagonist_name):
-    """修复视角漂移（修复版：返回计数）"""
+    """修复视角漂移（返回计数）"""
     thought_patterns = [
         r"(\\w{2,4})(想|觉得|认为|心想)",
         r"(\\w{2,4})的(内心|心里)"
@@ -2010,7 +1961,7 @@ FUNCTION FIX_POV_SHIFTS(text, protagonist_name):
 END FUNCTION
 
 FUNCTION COMPRESS_OVER_EXPANDED_INFO(text):
-    """压缩过度展开的信息点（修复版：返回计数）"""
+    """压缩过度展开的信息点（返回计数）"""
     info_points = DETECT_INFO_POINTS(text)
     compress_count = 0
     
@@ -2038,7 +1989,7 @@ END FUNCTION
 ```python
 FUNCTION DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors):
     """
-    全局诊断（v3修复版）
+    全局诊断（v3版本）
     输出分层报告，快速定位问题
     """
     
@@ -2304,8 +2255,8 @@ FUNCTION CALCULATE_DISEASE_SCORE(text, parsed_data):
     over_expanded = COUNT_OVER_EXPANDED_INFO(text, 150)
     disease_score += over_expanded * DISEASE_WEIGHTS["D1_过度展开"]
     
-    # D2: 过度解释
-    explain_patterns = ["这是因为", "之所以", "原因在于"]
+    # D2: 过度解释 （包含但不限于以下类型）
+    explain_patterns = ["这是因为", "之所以", "原因在于"] 
     FOR pattern IN explain_patterns:
         disease_score += COUNT_OCCURRENCES(text, pattern) * DISEASE_WEIGHTS["D2_过度解释"]
     END FOR
@@ -2398,7 +2349,7 @@ END FUNCTION
 ```python
 FUNCTION ANALYZE_WHAT_WENT_WRONG(diagnosis, parsed_data, chapter_content):
     """
-    分析诊断失败的根本原因（修复版：增加上下文）
+    分析诊断失败的根本原因（增加上下文）
     避免盲目重写
     """
     
@@ -2487,7 +2438,7 @@ END FUNCTION
 
 FUNCTION GENERATE_FIX_INSTRUCTION(problem_analysis):
     """
-    根据问题分析生成修正指令（修复版：结构化）
+    根据问题分析生成修正指令（结构化）
     """
     
     fix_instruction = {
@@ -2552,7 +2503,7 @@ END FUNCTION
 ```python
 FUNCTION WRITE_EMOTION(unit, expansion_level, parsed_data):
     """
-    写情绪单元（v3修复版）
+    写情绪单元（v3版本）
     根据expansion_level动态Show/Tell
     """
     
@@ -2589,7 +2540,7 @@ FUNCTION WRITE_EMOTION(unit, expansion_level, parsed_data):
 END FUNCTION
 
 FUNCTION GENERATE_MICRO_EXPRESSIONS(emotion_type, intensity):
-    """生成生理反应（修复版：返回列表）"""
+    """生成生理反应（返回列表）"""
     emotion_map = {
         "焦虑": ["胃部收紧", "呼吸变浅", "手心冒汗", "肩膀紧绷"],
         "恐惧": ["后背发凉", "腿发软", "瞳孔收缩", "心跳骤停"],
@@ -2638,7 +2589,7 @@ END FUNCTION
 ```python
 FUNCTION DELIVER_OUTPUT_V3(chapter_content, new_facts, diagnosis, monitors):
     """
-    交付输出（v3修复版：结构化输出）
+    交付输出（v3结构化输出）
     """
     
     output = {}
@@ -2650,12 +2601,14 @@ FUNCTION DELIVER_OUTPUT_V3(chapter_content, new_facts, diagnosis, monitors):
     status_emoji = "✅" IF diagnosis.passed ELSE "❌"
     forced_note = " [强制交付]" IF diagnosis.forced_delivery ELSE ""
     
-    output["summary"] = f"""
-## 快速摘要
-{status_emoji} {diagnosis.summary.status}{forced_note}
-- 字数: {diagnosis.summary.word_count}
-- 质量分: {diagnosis.summary.quality_score}
-"""
+    output["summary"] = f
+
+	"""
+	## 快速摘要
+	{status_emoji} {diagnosis.summary.status}{forced_note}
+	- 字数: {diagnosis.summary.word_count}
+	- 质量分: {diagnosis.summary.quality_score}
+	"""
     
     # ========== 输出3：问题清单（如果有）==========
     IF LENGTH(diagnosis.critical) > 0:
@@ -2677,7 +2630,8 @@ FUNCTION DELIVER_OUTPUT_V3(chapter_content, new_facts, diagnosis, monitors):
     output["new_facts"] = FORMAT_FACTS_LIST(new_facts)
     
     # ========== 输出5：详细诊断（可折叠）==========
-    details_content = f"""
+    details_content = f
+"""
 - 总字数: {diagnosis.details.word_count}
 - 对话占比: {diagnosis.details.dialogue_ratio * 100:.1f}% (目标{TOMATO_CORE_RULES.dialogue_ratio[0]*100}-{TOMATO_CORE_RULES.dialogue_ratio[1]*100}%)
 - 内心戏占比: {diagnosis.details.inner_ratio * 100:.1f}% (上限{TOMATO_CORE_RULES.inner_monologue_max*100}%)
@@ -2700,13 +2654,7 @@ FUNCTION DELIVER_OUTPUT_V3(chapter_content, new_facts, diagnosis, monitors):
         details_content += "\n"
     END FOR
     
-    output["details"] = f"""
-<details>
-<summary>📊 详细统计（点击展开）</summary>
-
-{details_content}
-</details>
-"""
+    output["details"] = f"""{details_content}"""
     
     RETURN output
 END FUNCTION
@@ -2866,7 +2814,7 @@ END FUNCTION
 FUNCTION ESTIMATE_SCENE_COUNT(parsed_data):
     """
     从Capsule推断场景数量
-    规则：3000-4000字 → 4-5个场景
+    规则：2000-4000字 → 4-5个场景
     """
     word_target = parsed_data.meta.GET("word_count_target", WORD_COUNT_TARGET)
     scene_count = ROUND(word_target / SCENE_WORD_AVG)
@@ -2942,7 +2890,7 @@ END FUNCTION
 
 FUNCTION INSERT_COOL_POINT(scene_text, cool_text, cool_type):
     """
-    插入爽点到场景中（修复版：明确位置）
+    插入爽点到场景中（明确位置）
     """
     insert_position = COOL_POINT_TYPES[cool_type].插入位置
     
@@ -4015,7 +3963,7 @@ END IF
 ## 【附录】快速参考
 
 ### 核心常量
-- `WORD_COUNT_TARGET`: 3000字
+- `WORD_COUNT_TARGET`: 2000字
 - `SCENE_WORD_AVG`: 750字/场景
 - `TOMATO_CORE_RULES.dialogue_ratio`: [0.35, 0.45]
 - `TOMATO_CORE_RULES.inner_monologue_max`: 0.15
@@ -4030,7 +3978,7 @@ END IF
 - 数组过滤: `FILTER(array, condition)`
 
 ### 病症权重
-- 高权重(1.5): D3内心戏、D11密度、D18情绪词、D20视角
+- 高权重(1.5): D2过度解释、D3内心戏、D11密度、D18情绪词、D20视角
 - 中权重(1.0-1.2): 大部分病症
 - 低权重(0.5): D7逻辑（因果词高频）
 - 零权重(0.0): D6/D9/D10（写作阶段处理）
