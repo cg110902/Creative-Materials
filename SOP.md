@@ -268,6 +268,250 @@ SOP v3.1的设计哲学是：
 **签名：**Claude  
 **日期：**每次执行MAIN_EXECUTION前
 
+
+
+---
+
+## 🛡️ 防止"假修复"协议
+
+### 什么是"假修复"？
+指诊断出问题后，Claude进行了"表面修改"但实际问题未解决的行为。
+
+**典型假修复行为：**
+1. **数据造假**：
+   - 诊断：对话占比28%
+   - 假修复：在几处描写后加了`"嗯"`，占比变30%
+   - 真实问题：对话质量和数量仍然不足
+   
+2. **局部修补**：
+   - 诊断：字数不足3000字
+   - 假修复：在结尾加了300字注水内容
+   - 真实问题：缺少完整场景，不是缺文字
+
+3. **标记欺骗**：
+   - 诊断：核心任务未完成
+   - 假修复：在某段插入任务关键词
+   - 真实问题：任务逻辑未实现
+
+---
+
+### ✅ 真修复的标准
+
+#### 标准1：验证驱动
+```python
+BEFORE CLAIM_FIXED:
+    # 重新运行检查函数
+    is_fixed, new_error = CHECK_FUNCTION()
+    
+    IF NOT is_fixed:
+        ADMIT("修复失败")
+        TRIGGER_REWRITE()
+    END IF
+END BEFORE
+```
+
+**实例**：
+- ❌ 假修复："我加了300字对话，对话占比应该够了"
+- ✅ 真修复："我加了300字对话，重新计算占比为37%，已达标"
+
+#### 标准2：问题根源解决
+```python
+IF issue.root_cause == "场景数量不足":
+    fix_action = "增加1-2个完整场景"  # ✅
+    NOT "在现有场景注水500字"         # ❌
+END IF
+```
+
+**实例**：
+- ❌ 假修复：字数不足，于是把所有段落拉长
+- ✅ 真修复：字数不足因为缺验证场景，补充"陈平第二次测试石珠"场景
+
+#### 标准3：不可修复就承认
+```python
+IF issue.type IN ["MISSION", "REDLINE"]:
+    fix_feasibility = "无法通过润色修复"
+    required_action = "必须重写相关场景"
+    
+    # 不要尝试假修复
+    ADMIT_NEED_REWRITE()
+END IF
+```
+
+**实例**：
+- ❌ 假修复：核心任务"陈平必须获得石珠"未完成，在结尾加一句"陈平摸了摸怀里的石珠"
+- ✅ 真承认：核心任务未完成，需要重写场景2-3补充获得石珠的完整过程
+
+---
+
+### 🔍 修复后的强制验证流程
+```python
+FUNCTION FIX_AND_VERIFY(issue, chapter_content, parsed_data):
+    """修复并验证"""
+    
+    PRINT "[FIX] 开始修复: {issue.type}"
+    
+    # 1. 记录修复前状态
+    before_metrics = MEASURE_METRICS(chapter_content)
+    
+    # 2. 执行修复
+    fixed_content = APPLY_FIX(issue, chapter_content, parsed_data)
+    
+    # 3. 记录修复后状态
+    after_metrics = MEASURE_METRICS(fixed_content)
+    
+    # 4. 验证修复效果
+    PRINT "[VERIFY] 修复前: {before_metrics}"
+    PRINT "[VERIFY] 修复后: {after_metrics}"
+    
+    is_actually_fixed = VERIFY_FIX_QUALITY(before_metrics, after_metrics, issue)
+    
+    IF NOT is_actually_fixed:
+        PRINT "[VERIFY FAILED] 修复无效，问题仍然存在"
+        RETURN NULL  # 返回NULL表示修复失败
+    ELSE:
+        PRINT "[VERIFY PASSED] 修复有效"
+        RETURN fixed_content
+    END IF
+END FUNCTION
+
+FUNCTION VERIFY_FIX_QUALITY(before, after, issue):
+    """验证修复质量"""
+    
+    SWITCH issue.type:
+        CASE "WORD_COUNT":
+            # 字数必须进入合格区间
+            RETURN after.word_count >= WORD_COUNT_MIN AND after.word_count <= WORD_COUNT_MAX
+        
+        CASE "DIALOGUE_RATIO":
+            # 对话占比必须达到最低线，且增量合理（不能靠加"嗯啊哦"凑数）
+            improvement = after.dialogue_ratio - before.dialogue_ratio
+            RETURN after.dialogue_ratio >= 0.35 AND improvement > 0.05
+        
+        CASE "INFO_DENSITY":
+            # 信息密度必须提升
+            RETURN after.info_density >= TOMATO_CORE_RULES.info_density_min
+        
+        DEFAULT:
+            RETURN FALSE
+    END SWITCH
+END FUNCTION
+```
+
+---
+
+
+---
+
+# ==================== 约束级别系统 ====================
+```python
+CONST CONSTRAINT_LEVELS = {
+    "MANDATORY": {
+        "description": "强制执行，失败则报CRITICAL错误并重写",
+        "failure_action": "REWRITE",
+        "color": "🔴"
+    },
+    "CRITICAL": {
+        "description": "关键约束，失败则报错但可尝试修复",
+        "failure_action": "FIX_OR_REWRITE",
+        "color": "🟠"
+    },
+    "IMPORTANT": {
+        "description": "重要建议，失败则记录WARNING",
+        "failure_action": "LOG_WARNING",
+        "color": "🟡"
+    },
+    "RECOMMENDED": {
+        "description": "推荐执行，失败无惩罚",
+        "failure_action": "IGNORE",
+        "color": "🟢"
+    },
+    "OPTIONAL": {
+        "description": "可选执行，完全自由",
+        "failure_action": "IGNORE",
+        "color": "⚪"
+    }
+}
+```
+# ==================== 断言系统 ====================
+```python
+FUNCTION ASSERT(condition, error_info):
+    """
+    硬约束断言，不满足则立即中断
+    
+    参数:
+        condition: 布尔条件
+        error_info: 错误信息字典，包含：
+            - message: 错误描述
+            - current: 当前值
+            - expected: 期望值
+            - fix_instruction: 修复指令（可选）
+            - severity: 严重度（1-10）
+    """
+    IF NOT condition:
+        PRINT "[ASSERT FAILED] {error_info.message}"
+        PRINT "  当前值: {error_info.current}"
+        PRINT "  期望值: {error_info.expected}"
+        
+        IF "fix_instruction" IN error_info:
+            PRINT "  修复方法: {error_info.fix_instruction}"
+        END IF
+        
+        THROW AssertionError(error_info)
+    END IF
+END FUNCTION
+
+FUNCTION ENFORCE(constraint_level, check_function, fix_function=NULL):
+    """
+    约束执行器
+    
+    参数:
+        constraint_level: 约束级别（MANDATORY/CRITICAL/IMPORTANT等）
+        check_function: 检查函数，返回(is_valid, error_info)
+        fix_function: 修复函数（可选），返回修复后的内容
+    
+    返回:
+        执行结果
+    """
+    is_valid, error_info = check_function()
+    
+    IF NOT is_valid:
+        level_config = CONSTRAINT_LEVELS[constraint_level]
+        
+        PRINT "{level_config.color} [{constraint_level}] {error_info.message}"
+        
+        SWITCH level_config.failure_action:
+            CASE "REWRITE":
+                THROW ConstraintViolation(constraint_level, error_info)
+            
+            CASE "FIX_OR_REWRITE":
+                IF fix_function IS NOT NULL:
+                    PRINT "[ATTEMPTING FIX...]"
+                    fixed_content = fix_function(error_info)
+                    
+                    # 验证修复是否成功
+                    is_valid_after_fix, _ = check_function()
+                    
+                    IF is_valid_after_fix:
+                        PRINT "[FIX SUCCESSFUL]"
+                        RETURN fixed_content
+                    ELSE:
+                        PRINT "[FIX FAILED] 触发重写"
+                        THROW ConstraintViolation(constraint_level, error_info)
+                    END IF
+                ELSE:
+                    PRINT "[NO FIX FUNCTION] 触发重写"
+                    THROW ConstraintViolation(constraint_level, error_info)
+                END IF
+            
+            CASE "LOG_WARNING":
+                diagnosis.warnings.APPEND(error_info)
+            
+            CASE "IGNORE":
+                PASS
+        END SWITCH
+    END IF
+END FUNCTION
+```
 ---
 
 ## 【模块0】GLOBAL_CONFIG - 全局配置
@@ -552,26 +796,93 @@ FUNCTION MAIN_EXECUTION(CAPSULE, existing_humanizer=NULL):
     PRINT "[SYSTEM] 开始全局诊断..."
     diagnosis = DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors)
     
-    # ========== STEP 7: 修正或重写 ==========
+    
+	# ========== STEP 7: 修正或重写决策 ==========
     IF diagnosis.has_critical_issues:
-        IF humanizer.rewrite_count < MAX_REWRITE_ATTEMPTS:
-            # 问题分析
-            PRINT "[SYSTEM] 分析问题原因..."
-            problem_analysis = ANALYZE_WHAT_WENT_WRONG(diagnosis, parsed_data, chapter_content)
+        fix_strategy = diagnosis.fix_strategy
+        
+        # 情况1: 有必须重写的问题
+        IF LENGTH(fix_strategy.must_rewrite) > 0:
+            PRINT "[CRITICAL] 发现{LENGTH(fix_strategy.must_rewrite)}个必须重写的问题："
+            FOR issue IN fix_strategy.must_rewrite:
+                PRINT "  - {issue.type}: {issue.issue}"
+            END FOR
             
-            PRINT "[SYSTEM] 生成修正指令..."
-            fix_instruction = GENERATE_FIX_INSTRUCTION(problem_analysis)
+            IF humanizer.rewrite_count < MAX_REWRITE_ATTEMPTS:
+                PRINT "[SYSTEM] 第{humanizer.rewrite_count + 1}次完全重写..."
+                
+                problem_analysis = ANALYZE_WHAT_WENT_WRONG(diagnosis, parsed_data, chapter_content)
+                fix_instruction = GENERATE_FIX_INSTRUCTION(problem_analysis)
+                
+                humanizer.rewrite_count += 1
+                humanizer.fix_instruction = fix_instruction
+                
+                # 完全重写
+                RETURN MAIN_EXECUTION(CAPSULE, humanizer)
+            ELSE:
+                PRINT "[ERROR] 已达最大重写次数({MAX_REWRITE_ATTEMPTS})，强制交付"
+                diagnosis.forced_delivery = TRUE
+            END IF
+        
+        # 情况2: 只有可修复的问题
+        ELSE IF LENGTH(fix_strategy.manual_fixable) > 0:
+            PRINT "[FIX] 发现{LENGTH(fix_strategy.manual_fixable)}个可修复的问题"
             
-            humanizer.rewrite_count += 1
-            humanizer.fix_instruction = fix_instruction
+            fixed_content = chapter_content
+            all_fixed = TRUE
             
-            PRINT "[SYSTEM] 第{humanizer.rewrite_count}次重写（针对性修正）..."
+            FOR issue IN fix_strategy.manual_fixable:
+                PRINT "[FIX] 修复问题: {issue.type}"
+                
+                TRY:
+                    IF issue.type == "WORD_COUNT":
+                        fixed_content = FIX_WORD_COUNT(fixed_content, issue, parsed_data)
+                    ELSE IF issue.type == "DIALOGUE_RATIO":
+                        fixed_content = FIX_DIALOGUE_RATIO_GLOBAL(fixed_content, issue, parsed_data)
+                    END IF
+                    
+                    # 验证修复是否成功
+                    IF NOT VERIFY_FIX(fixed_content, issue):
+                        PRINT "[FIX FAILED] {issue.type}修复失败"
+                        all_fixed = FALSE
+                        BREAK
+                    END IF
+                    
+                CATCH FixError AS e:
+                    PRINT "[FIX ERROR] {issue.type}修复出错: {e.message}"
+                    all_fixed = FALSE
+                    BREAK
+                END TRY
+            END FOR
             
-            # 递归重写（传递humanizer状态）
-            RETURN MAIN_EXECUTION(CAPSULE, humanizer)
-        ELSE:
-            PRINT "[ERROR] 已达最大重写次数({MAX_REWRITE_ATTEMPTS})，强制交付"
-            diagnosis.forced_delivery = TRUE
+            # 如果全部修复成功，更新内容并重新诊断
+            IF all_fixed:
+                chapter_content = fixed_content
+                PRINT "[FIX] 所有问题修复完成，重新诊断..."
+                
+                # 重新诊断
+                diagnosis = DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors)
+                
+                IF diagnosis.has_critical_issues:
+                    PRINT "[ERROR] 修复后仍有问题，触发重写"
+                    
+                    IF humanizer.rewrite_count < MAX_REWRITE_ATTEMPTS:
+                        humanizer.rewrite_count += 1
+                        RETURN MAIN_EXECUTION(CAPSULE, humanizer)
+                    ELSE:
+                        diagnosis.forced_delivery = TRUE
+                    END IF
+                END IF
+            ELSE:
+                PRINT "[ERROR] 部分问题修复失败，触发重写"
+                
+                IF humanizer.rewrite_count < MAX_REWRITE_ATTEMPTS:
+                    humanizer.rewrite_count += 1
+                    RETURN MAIN_EXECUTION(CAPSULE, humanizer)
+                ELSE:
+                    diagnosis.forced_delivery = TRUE
+                END IF
+            END IF
         END IF
     END IF
     
@@ -908,7 +1219,22 @@ FUNCTION WRITE_SCENE_V3(scene_idx, parsed_data, humanizer, previous_content):
     ending = WRITE_SCENE_ENDING(scene_idx, parsed_data, humanizer, scene_text)
     scene_text += ending
     
-    PRINT "[SCENE] 场景{scene_idx}完成，实际{LENGTH(scene_text)}字"
+PRINT "[SCENE] 场景{scene_idx}完成，实际{LENGTH(scene_text)}字"
+    
+    # ========== STEP 8: 强制约束检查 ==========
+    # 检查1: 对话占比（CRITICAL级）
+    ENFORCE(
+        constraint_level="CRITICAL",
+        check_function=LAMBDA: CHECK_DIALOGUE_RATIO(scene_text, 0.25),
+        fix_function=LAMBDA error_info: FIX_DIALOGUE_RATIO(scene_text, 0.25, error_info)
+    )
+    
+    # 检查2: 场景字数（MANDATORY级）
+    ENFORCE(
+        constraint_level="MANDATORY",
+        check_function=LAMBDA: CHECK_SCENE_LENGTH(scene_text, SCENE_WORD_MIN, SCENE_WORD_MAX),
+        fix_function=NULL  # 字数问题无法自动修复，必须重写
+    )
     
     RETURN scene_text
 END FUNCTION
@@ -1771,16 +2097,24 @@ FUNCTION DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors):
         diagnosis.has_critical_issues = TRUE
     END IF
     
-    # 检查2：核心任务（必须完成）
+# ========== 检查2：核心任务（必须完成）==========
     IF "core_mission" IN parsed_data.goals:
         core_mission = parsed_data.goals.core_mission
         
-        IF NOT CHECK_MISSION_COMPLETED(chapter_content, core_mission, parsed_data):
+        is_completed, error_info = CHECK_MISSION_COMPLETED_V2(
+            chapter_content, 
+            core_mission, 
+            parsed_data
+        )
+        
+        IF NOT is_completed:
             diagnosis.critical.APPEND({
                 "type": "MISSION",
-                "issue": f"核心任务未完成：{core_mission}",
-                "fix": "必须重写或补充关键情节",
-                "severity": 10
+                "issue": error_info.message,
+                "details": error_info.current,
+                "fix": error_info.fix_instruction,
+                "severity": error_info.severity,
+                "auto_fixable": FALSE  # 核心任务失败无法自动修复
             })
             diagnosis.passed = FALSE
             diagnosis.has_critical_issues = TRUE
@@ -1868,9 +2202,42 @@ FUNCTION DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors):
     
     # ========== 详细数据 ==========
     diagnosis.details = stats
+	
+	
+	# ========== 修复可行性分析 ==========
+    diagnosis.fix_strategy = ANALYZE_FIX_FEASIBILITY(diagnosis)
     
     RETURN diagnosis
+
+	
 END FUNCTION
+
+
+FUNCTION ANALYZE_FIX_FEASIBILITY(diagnosis):
+    """
+    分析哪些问题可以修复，哪些必须重写
+    """
+    fix_strategy = {
+        "auto_fixable": [],      # 可以自动修复的问题
+        "manual_fixable": [],    # 可以手动修复的问题
+        "must_rewrite": []       # 必须重写的问题
+    }
+    
+    FOR issue IN diagnosis.critical:
+        IF "auto_fixable" IN issue AND issue.auto_fixable:
+            fix_strategy.auto_fixable.APPEND(issue)
+        ELSE IF issue.type IN ["WORD_COUNT", "DIALOGUE_RATIO"]:
+            # 字数和对话占比问题可尝试修复
+            fix_strategy.manual_fixable.APPEND(issue)
+        ELSE:
+            # 核心任务、红线违反等必须重写
+            fix_strategy.must_rewrite.APPEND(issue)
+        END IF
+    END FOR
+    
+    RETURN fix_strategy
+END FUNCTION
+
 
 FUNCTION CALCULATE_QUALITY_SCORE(stats):
     """
@@ -3256,6 +3623,255 @@ FUNCTION SPLIT_SENTENCES(text):
     # 按句号、问号、感叹号分割
     RETURN SPLIT_PATTERN(text, r"[。！？]")
 END FUNCTION
+
+
+# ==================== 约束检查函数 ====================
+
+FUNCTION CHECK_DIALOGUE_RATIO(text, min_ratio):
+    """检查对话占比"""
+    current_ratio = CALCULATE_DIALOGUE_RATIO(text)
+    
+    is_valid = current_ratio >= min_ratio
+    
+    error_info = {
+        "message": f"对话占比不足",
+        "current": f"{current_ratio*100:.1f}%",
+        "expected": f">={min_ratio*100:.0f}%",
+        "severity": 8,
+        "deficit": max(0, min_ratio - current_ratio)
+    }
+    
+    RETURN (is_valid, error_info)
+END FUNCTION
+
+FUNCTION FIX_DIALOGUE_RATIO(text, min_ratio, error_info):
+    """修复对话占比不足"""
+    deficit = error_info.deficit
+    chars_needed = ROUND(LENGTH(text) * deficit)
+    
+    PRINT f"[FIX] 需要补充约{chars_needed}字对话"
+    
+    # 策略1: 将部分描写改写为对话
+    text = CONVERT_NARRATION_TO_DIALOGUE(text, chars_needed)
+    
+    # 策略2: 在适当位置插入新对话
+    IF CALCULATE_DIALOGUE_RATIO(text) < min_ratio:
+        text = INSERT_SUPPLEMENTARY_DIALOGUE(text, chars_needed)
+    END IF
+    
+    RETURN text
+END FUNCTION
+
+FUNCTION CHECK_SCENE_LENGTH(text, min_length, max_length):
+    """检查场景字数"""
+    current_length = LENGTH(text)
+    
+    is_valid = current_length >= min_length AND current_length <= max_length
+    
+    error_info = {
+        "message": f"场景字数越界",
+        "current": f"{current_length}字",
+        "expected": f"{min_length}-{max_length}字",
+        "severity": 10
+    }
+    
+    RETURN (is_valid, error_info)
+END FUNCTION
+
+FUNCTION CHECK_MISSION_COMPLETED_V2(text, mission, parsed_data):
+    """检查核心任务完成（v2增强版）"""
+    mission_keywords = EXTRACT_KEYWORDS(mission)
+    
+    # 检查1: 所有关键词是否出现
+    missing_keywords = []
+    FOR keyword IN mission_keywords:
+        IF keyword NOT IN text:
+            missing_keywords.APPEND(keyword)
+        END IF
+    END FOR
+    
+    # 检查2: 语义验证
+    has_semantic_evidence = SEMANTIC_VERIFY_MISSION(text, mission, mission_keywords)
+    
+    is_valid = LENGTH(missing_keywords) == 0 AND has_semantic_evidence
+    
+    error_info = {
+        "message": "核心任务未完成",
+        "current": f"缺失关键词: {missing_keywords}" IF LENGTH(missing_keywords) > 0 ELSE "语义不匹配",
+        "expected": f"完成任务: {mission}",
+        "severity": 10,
+        "fix_instruction": "必须重写相关场景以完成核心任务"
+    }
+    
+    RETURN (is_valid, error_info)
+END FUNCTION
+
+# ==================== 全局修复函数 ====================
+
+FUNCTION FIX_WORD_COUNT(text, issue, parsed_data):
+    """修复字数问题"""
+    current_count = LENGTH(text)
+    target_min = WORD_COUNT_MIN
+    target_max = WORD_COUNT_MAX
+    
+    IF current_count < target_min:
+        # 字数不足：扩展场景
+        deficit = target_min - current_count
+        PRINT "[FIX] 需要增加{deficit}字"
+        
+        # 策略：找到最重要的场景，扩展其内容
+        scenes = DETECT_SCENES(text)
+        target_scene = FIND_MOST_IMPORTANT_SCENE(scenes, parsed_data)
+        
+        expanded_scene = EXPAND_SCENE(target_scene, deficit, parsed_data)
+        text = REPLACE_SCENE_IN_TEXT(text, target_scene, expanded_scene)
+        
+    ELSE IF current_count > target_max:
+        # 字数超标：压缩场景
+        excess = current_count - target_max
+        PRINT "[FIX] 需要删减{excess}字"
+        
+        # 策略：找到次要场景，压缩其内容
+        scenes = DETECT_SCENES(text)
+        target_scene = FIND_LEAST_IMPORTANT_SCENE(scenes, parsed_data)
+        
+        compressed_scene = COMPRESS_SCENE(target_scene, excess, parsed_data)
+        text = REPLACE_SCENE_IN_TEXT(text, target_scene, compressed_scene)
+    END IF
+    
+    RETURN text
+END FUNCTION
+
+FUNCTION FIX_DIALOGUE_RATIO_GLOBAL(text, issue, parsed_data):
+    """修复全局对话占比"""
+    current_ratio = CALCULATE_DIALOGUE_RATIO(text)
+    target_ratio = TOMATO_CORE_RULES.dialogue_ratio[0]  # 最低目标35%
+    
+    IF current_ratio < target_ratio:
+        deficit = target_ratio - current_ratio
+        chars_needed = ROUND(LENGTH(text) * deficit)
+        
+        PRINT "[FIX] 需要补充约{chars_needed}字对话"
+        
+        # 策略1: 将描写改为对话
+        text = CONVERT_NARRATION_TO_DIALOGUE_GLOBAL(text, chars_needed)
+        
+        # 策略2: 在对话稀少的场景插入对话
+        scenes = DETECT_SCENES(text)
+        FOR scene IN scenes:
+            scene_ratio = CALCULATE_DIALOGUE_RATIO(scene.content)
+            IF scene_ratio < 0.25:
+                scene.content = INSERT_DIALOGUE_TO_SCENE(scene.content, parsed_data)
+                text = REPLACE_SCENE_IN_TEXT(text, scene, scene.content)
+            END IF
+        END FOR
+    END IF
+    
+    RETURN text
+END FUNCTION
+
+FUNCTION VERIFY_FIX(fixed_content, issue):
+    """验证修复是否成功"""
+    SWITCH issue.type:
+        CASE "WORD_COUNT":
+            count = LENGTH(fixed_content)
+            RETURN count >= WORD_COUNT_MIN AND count <= WORD_COUNT_MAX
+        
+        CASE "DIALOGUE_RATIO":
+            ratio = CALCULATE_DIALOGUE_RATIO(fixed_content)
+            RETURN ratio >= TOMATO_CORE_RULES.dialogue_ratio[0]
+        
+        DEFAULT:
+            RETURN FALSE
+    END SWITCH
+END FUNCTION
+
+FUNCTION CONVERT_NARRATION_TO_DIALOGUE(text, target_chars):
+    """将描写转换为对话（局部）"""
+    # 找到适合改写的描写段落
+    paragraphs = SPLIT_PARAGRAPHS(text)
+    candidates = []
+    
+    FOR i, para IN ENUMERATE(paragraphs):
+        # 条件：段落是纯描写，长度>50字，不包含对话
+        IF NOT CONTAINS_DIALOGUE(para) AND LENGTH(para) > 50:
+            candidates.APPEND((i, para))
+        END IF
+    END FOR
+    
+    IF LENGTH(candidates) == 0:
+        RETURN text
+    END IF
+    
+    # 选择第一个候选段落
+    para_idx, para = candidates[0]
+    
+    # 改写为对话
+    dialogue_version = REWRITE_AS_DIALOGUE(para, parsed_data)
+    paragraphs[para_idx] = dialogue_version
+    
+    RETURN JOIN(paragraphs, "\n\n")
+END FUNCTION
+
+FUNCTION CONVERT_NARRATION_TO_DIALOGUE_GLOBAL(text, target_chars):
+    """将描写转换为对话（全局）"""
+    converted_chars = 0
+    
+    WHILE converted_chars < target_chars:
+        text_before = text
+        text = CONVERT_NARRATION_TO_DIALOGUE(text, target_chars - converted_chars)
+        
+        # 如果无法继续转换，退出
+        IF text == text_before:
+            BREAK
+        END IF
+        
+        converted_chars = LENGTH(text) - LENGTH(text_before)
+    END WHILE
+    
+    RETURN text
+END FUNCTION
+
+FUNCTION INSERT_SUPPLEMENTARY_DIALOGUE(text, target_chars):
+    """插入补充对话"""
+    # 找到合适的插入点（在动作描写后）
+    insertion_point = FIND_DIALOGUE_INSERTION_POINT(text)
+    
+    IF insertion_point == -1:
+        RETURN text
+    END IF
+    
+    # 生成补充对话
+    dialogue = GENERATE_CONTEXTUAL_DIALOGUE(text, insertion_point, parsed_data, target_chars)
+    
+    # 插入
+    RETURN text[:insertion_point] + "\n\n" + dialogue + "\n\n" + text[insertion_point:]
+END FUNCTION
+
+FUNCTION EXPAND_SCENE(scene, target_chars, parsed_data):
+    """扩展场景内容"""
+    # 策略：增加细节描写和对话
+    expanded = scene.content
+    
+    # 1. 为动作添加细节
+    expanded = ADD_ACTION_DETAILS(expanded, target_chars * 0.4)
+    
+    # 2. 补充对话
+    expanded = INSERT_SUPPLEMENTARY_DIALOGUE(expanded, target_chars * 0.6)
+    
+    RETURN expanded
+END FUNCTION
+
+FUNCTION COMPRESS_SCENE(scene, target_chars, parsed_data):
+    """压缩场景内容"""
+    compressed = scene.content
+    
+    # 策略：删除冗余描写
+    compressed = REMOVE_REDUNDANT_DESCRIPTIONS(compressed, target_chars)
+    
+    RETURN compressed
+END FUNCTION
+
 ```
 
 ---
@@ -3422,4 +4038,3 @@ END IF
 ---
 
 **END OF SOP v3.1**
-		
