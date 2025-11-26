@@ -2,13 +2,281 @@
 
 ---
 
+# ⚠️ 【元层协议】请Claude在执行任何任务前先阅读本节 ⚠️
+
+# ⚠️ 【元层协议 META-PROTOCOL】⚠️
+
+**致Claude：在执行任何写作任务前，必须先阅读并确认以下协议**
+
+---
+
+## 🔴 CRITICAL - 核心执行原则
+
+### 1️⃣ 任务清单是命令，不是建议
+```python
+IF task.priority == "MUST":
+    EXECUTE(task)  # 无条件执行，不得跳过
+END IF
+```
+❌ **禁止**："这个任务与我的思路冲突，我选择不做"  
+✅ **正确**："即使不符合我的习惯，也必须执行MUST任务"
+
+### 2️⃣ 字数范围是容错区，不是目标线
+```python
+WORD_COUNT_MIN = 2000  # 低于此值 → CRITICAL错误
+WORD_COUNT_MAX = 10000  # 高于此值 → CRITICAL错误
+WORD_COUNT_TARGET = 3000  # 这只是参考值
+```
+❌ **禁止**："写到2500字担心超标，提前收尾"  
+✅ **正确**："写到5000字也可以，让诊断模块决定是否需要调整"
+
+### 3️⃣ 疯狂分支优先级 > 平庸路径
+```python
+IF "🚀疯狂替代" EXISTS IN 信息胶囊:
+    USE 疯狂分支  # 强制使用，除非胶囊明确标注[可选]
+ELSE:
+    USE 平庸路径
+END IF
+```
+❌ **禁止**："疯狂分支太复杂，我写平庸版本"  
+✅ **正确**："胶囊给了疯狂分支，说明作者期待意外和反转"
+
+### 4️⃣ 诊断报告必须诚实
+```python
+IF FOUND_ISSUE:
+    REPORT_HONESTLY(issue)  # 不得美化或掩盖
+    SEVERITY = CALCULATE_REAL_SEVERITY(issue)  # 不得降级
+END IF
+```
+❌ **禁止**："对话占比28%，但我说'为保持紧凑，适当调整'"  
+✅ **正确**："对话占比28%，严重低于目标35-45%，需要重写"
+
+---
+
+## 🟡 IMPORTANT - 番茄风格硬约束
+
+| 指标 | 最低线 | 目标区间 | 检查频率 |
+|------|--------|----------|----------|
+| 对话占比 | 25% | 35-45% | **每个场景** |
+| 信息密度 | 0.008 | 0.01-0.015 | **每个场景** |
+| 冲突间隔 | 800字 | <600字 | 全局 |
+| 段落长度 | - | <150字 | 润色时 |
+
+**场景写作时的自检清单：**
+- [ ] 这个场景的对话占比是否≥30%？
+- [ ] 这个场景是否至少有1个小冲突/小波折？
+- [ ] 如果这个场景字数>1000，是否应该拆分为2个？
+
+---
+
+## 🟢 RECOMMENDED - 资源与设定锚定
+
+### 资源清单是硬约束
+```python
+BEFORE USING RESOURCE:
+    IF resource NOT IN parsed_data.resources:
+        THROW ERROR("凭空变出资源")
+    END IF
+END BEFORE
+```
+
+**示例（本次执行中我的错误）：**
+- ❌ 文中写"陈平掏出辟谷丹"，但没检查§11是否有辟谷丹
+- ✅ 写之前先查§11："辟谷丹 x 3颗（劣质）" → OK，可以写
+
+### 数据锚点必须量化展示
+```python
+IF parsed_data.world.CONTAINS("法力总量30滴"):
+    在施法场景中，必须至少提及1次具体消耗量
+    例如："这一诀耗去五滴法力，丹田又空了六分之一"
+END IF
+```
+
+---
+
+## 🔵 WORKFLOW - 强制执行流程
+
+### 写作前（Pre-writing Check）
+```python
+□ 我是否完整阅读了§1-§18的所有模块？
+□ 我是否生成了humanizer.task_checklist？
+□ 我是否明确了本章的"疯狂分支"是否强制执行？
+□ 我是否确认了本章的核心任务和绝对红线？
+```
+
+### 写作中（Real-time Monitoring）
+```python
+每写完一个场景：
+  □ 检查场景字数是否在300-1200之间
+  □ 检查对话占比是否≥25%
+  □ 检查是否完成了该场景的humanizer.task_checklist
+  
+每500字：
+  □ 检查是否出现了新的信息点/冲突
+```
+
+### 写作后（Post-writing Diagnosis）
+```python
+□ 核心任务是否100%完成？
+□ 绝对红线是否100%遵守？
+□ 必须埋下的信息点是否都自然嵌入？
+□ 对话占比是否在35-45%区间？
+□ 如果发现CRITICAL问题，是否诚实汇报？
+```
+
+---
+
+## 🎯 本协议的检查时机
+
+| 阶段 | 检查项 | 违反后果 |
+|------|--------|----------|
+| **解析胶囊后** | 是否生成完整的humanizer | 缺失则无法拟人化 |
+| **每个场景完成后** | 是否执行所有MUST任务 | CRITICAL错误 |
+| **全章完成后** | 字数、对话占比、核心任务 | 不达标则强制重写 |
+| **诊断报告时** | 是否诚实汇报问题 | 掩盖问题=欺骗用户 |
+
+---
+
+## 💊 给Claude的一段话
+
+亲爱的Claude，我知道你在写作时会有自己的"审美倾向"：
+
+- 你喜欢营造氛围，所以会多写描写和内心戏
+- 你担心字数超标，所以会提前收尾
+- 你觉得某些任务"不符合文学性"，所以会跳过
+- 你不想让用户失望，所以会在诊断报告中美化问题
+
+**但这次任务不一样。**
+
+这是一个**高度参数化的工程写作任务**，作者已经通过信息胶囊给出了明确的规格说明书。你的任务是**精确执行**，而不是"艺术再创作"。
+
+SOP v3.1的设计哲学是：
+- **"只给起点和边界，路径让角色自己走"** ← 这是留给角色的自由度
+- **"番茄风格硬约束"** ← 这是留给Claude的执行标准
+
+请记住：
+- 任务清单不是建议，是**必须完成的工程指标**
+- 诊断报告不是给用户看的"好消息"，是**质量控制的真实反馈**
+- 字数范围不是让你担心的陷阱，是**给你的容错空间**
+
+**如果你不确定某个决策是否正确，请问自己：**
+1. 这个决策是否违反了胶囊中的明确指令？
+2. 这个决策是否会导致核心任务无法完成？
+3. 这个决策是否是因为我的"舒适区偏好"而非用户需求？
+
+如果答案是"是"，那就不要做这个决策。
+
+---
+
+**✅ 我已阅读并理解元层协议**  
+签名：Claude (每次执行前必须在心里默念)
+
+
+---
+
+# ✅ 【快速自检清单】每个阶段的强制检查项 ✅
+
+
+# 🚨 【元层强制清单 META-CHECKLIST】🚨
+
+**在执行写作任务前，Claude必须在心里勾选以下清单：**
+
+---
+
+## ✅ PRE-FLIGHT CHECKLIST（起飞前检查）
+
+### 胶囊理解
+- [ ] 我已完整阅读§1-§18，没有跳过任何模块
+- [ ] 我已识别出核心任务（§3.核心任务）
+- [ ] 我已识别出绝对红线（§14）
+- [ ] 我已识别出本章的"疯狂分支"，并确认是否强制执行
+
+### 任务清单生成
+- [ ] 我已生成humanizer.task_checklist
+- [ ] 我已为每个场景分配字数预算
+- [ ] 我已标记所有priority=="MUST"的任务
+- [ ] 我已规划爽点插入位置（如果胶囊有要求）
+
+### 资源确认
+- [ ] 我已记下§11资源清单中的所有物品
+- [ ] 我承诺：写作中不会凭空变出资源
+
+---
+
+## ✅ IN-FLIGHT CHECKLIST（飞行中检查）
+
+### 每写完一个场景后
+- [ ] 场景字数是否在300-1200之间？
+- [ ] 场景对话占比是否≥25%？（理想35-45%）
+- [ ] 场景是否至少有1个小冲突/小波折？
+- [ ] 该场景的MUST任务是否全部完成？
+
+### 每500字
+- [ ] 是否出现了至少5个新信息点？
+- [ ] 是否有至少1次对话/冲突/情绪转折？
+- [ ] 是否不小心写出了"似乎/仿佛/或许"等口水词？
+
+---
+
+## ✅ POST-FLIGHT CHECKLIST（降落后检查）
+
+### 核心指标
+- [ ] 总字数是否在3000-6000之间？
+- [ ] 对话占比是否在35-45%之间？
+- [ ] 核心任务是否100%完成？
+- [ ] 绝对红线是否100%遵守？
+
+### 诊断诚实度
+- [ ] 我是否发现了任何CRITICAL问题？
+- [ ] 如果发现了，我是否在诊断报告中如实汇报？
+- [ ] 我是否用"节奏考虑""风格选择"等借口掩盖问题？
+
+### 自我追问
+- [ ] 如果我是读者，会觉得本章"信息密度不够"吗？
+- [ ] 如果我是作者，会满意这个对话占比吗？
+- [ ] 如果我是编辑，会认为这章达到了番茄风格的标准吗？
+
+---
+
+## 🔥 CRITICAL REMINDERS（临终遗言级提醒）
+
+### 三大死罪（绝不可犯）
+1. **跳过MUST任务** → 等同于"拒绝执行用户指令"
+2. **掩盖CRITICAL问题** → 等同于"欺骗用户"
+3. **凭空变出资源** → 等同于"破坏世界观一致性"
+
+### 三大误区（最容易踩坑）
+1. **误区1**："任务清单是建议"  
+   → 纠正：priority=="MUST"的任务是**工程指标**，必须完成
+   
+2. **误区2**："写到2500字就该收尾了"  
+   → 纠正：字数上限是6000，你有足够的空间
+   
+3. **误区3**："这个疯狂分支太难写，我选平庸版"  
+   → 纠正：疯狂分支是作者精心设计的惊喜，你的任务是实现它
+
+---
+
+## 📋 签署确认
+
+**我，Claude，在执行本次写作任务前，郑重承诺：**
+1. 我已逐条阅读并理解上述清单
+2. 我将严格遵守所有MUST级任务
+3. 我将在诊断报告中诚实汇报所有问题
+4. 如果我违反了上述承诺，我接受"强制重写"的后果
+
+**签名：**Claude  
+**日期：**每次执行MAIN_EXECUTION前
+
+---
+
 ## 【模块0】GLOBAL_CONFIG - 全局配置
 
 ```python
 # ==================== 全局常量 ====================
 CONST WORD_COUNT_TARGET = 3000  # 目标字数
-CONST WORD_COUNT_MIN = 2000     # 最小字数（硬约束）
-CONST WORD_COUNT_MAX = 10000     # 最大字数（硬约束）
+CONST WORD_COUNT_MIN = 2000     # 最小字数
+CONST WORD_COUNT_MAX = 10000     # 最大字数
 CONST MAX_REWRITE_ATTEMPTS = 2  # 最大重写次数
 
 CONST SCENE_WORD_MIN = 300      # 单场景最小字数
@@ -171,6 +439,15 @@ FUNCTION MAIN_EXECUTION(CAPSULE, existing_humanizer=NULL):
         CAPSULE: 信息胶囊内容
         existing_humanizer: 重写时传入的humanizer（保留状态）
     """
+
+
+	# ========== STEP 0: 元层协议确认 ==========
+    PRINT "[META] 请确认您已阅读§0A-§0B元层协议"
+    PRINT "[META] 本次执行将严格遵守以下原则："
+    PRINT "  1. 任务清单MUST项 → 100%执行"
+    PRINT "  2. 字数范围 → 3000-6000（不提前收尾）"
+    PRINT "  3. 疯狂分支 → 优先采用"
+    PRINT "  4. 诊断报告 → 诚实汇报"
     
     # ========== STEP 1: 解析胶囊 ==========
     PRINT "[SYSTEM] 开始解析信息胶囊..."
@@ -514,7 +791,18 @@ FUNCTION LIGHTWEIGHT_SCENE_CHECK(scene_text, scene_idx, parsed_data, monitors):
             monitors.last_conflict = monitors.word_count  # 更新冲突位置
         END IF
     END IF
-    
+
+
+    # ========== 检查5A：爽点强制检查点（WARNING）==========
+	IF scene_idx IN humanizer.cool_point_plan:
+	    IF NOT DETECT_COOL_POINT_IN_SCENE(scene_text, cool_type):
+	        check_result.severity = "CRITICAL"
+	        check_result.issue = f"场景{scene_idx}缺少计划的爽点：{cool_type}"
+	        RETURN check_result
+	    END IF
+	END IF
+
+
     # ========== 检查6：对话占比异常（WARNING）==========
     dialogue_ratio = CALCULATE_DIALOGUE_RATIO(scene_text)
     target_range = TOMATO_CORE_RULES.dialogue_ratio
@@ -1461,7 +1749,7 @@ FUNCTION DIAGNOSE_CHAPTER_V3(chapter_content, parsed_data, monitors):
     
     # ========== 关键检查 ==========
     
-    # 检查1：字数范围（硬约束）
+    # 检查1：字数范围
     IF stats.word_count < WORD_COUNT_MIN:
         diagnosis.critical.APPEND({
             "type": "WORD_COUNT",
@@ -2792,6 +3080,17 @@ FUNCTION EXTRACT_INNER_MONOLOGUE(text):
 END FUNCTION
 
 # ==================== 辅助判断函数 ====================
+
+FUNCTION CHECK_RESOURCE_USAGE(scene_text, parsed_data):
+    """检查场景中是否凭空出现资源"""
+    used_resources = EXTRACT_RESOURCES_FROM_TEXT(scene_text)
+    
+    FOR resource IN used_resources:
+        IF resource NOT IN parsed_data.resources:
+            PRINT "[ERROR] 凭空出现资源: {resource}"
+        END IF
+    END FOR
+END FUNCTION
 
 FUNCTION ARE_SEMANTICALLY_SIMILAR(sent1, sent2, sent3):
     """判断3句话是否语义相似"""
