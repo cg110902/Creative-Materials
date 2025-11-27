@@ -1608,7 +1608,7 @@ FUNCTION WRITE_SCENE_BY_TYPE(scene_plan, parsed_data, previous_content, monitors
 END FUNCTION
 ```
 
-### §4.4 🍅 番茄风格质量系统（网文核心特色）(重点)
+### 4.4 🍅 番茄风格质量系统（网文核心特色）(重点)🍅
 
 > **设计目标**：确保章节符合番茄小说的核心特色——爽点密集、钩子频繁、节奏紧凑、信息量大。
 
