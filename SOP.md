@@ -6,14 +6,18 @@
 
 ---
 
-## 🔤 Key Terms Glossary | 核心术语表
 
-| English | 中文 | Definition |
-|---------|------|-----------|
-| Cool Point | 爽点 | Peak satisfaction moment (face-slap, show-off, reversal) |
-| Hook | 钩子 | Plot element that maintains reader interest every 400-600 chars |
-| OOC | 人设崩塌 | Out Of Character - behavior inconsistent with personality |
-| Tomato Style | 番茄风格 | Fast-paced web fiction with dense hooks & cool points |
+## Glossary | 完整术语表
+
+### Core Concepts
+- **Literary Goal**: The emotional/informational impact on readers, NOT writing style
+- **Scene Type**: A constraint generator, NOT a task list
+- **Hook**: New info/conflict/twist that maintains interest, NOT keyword
+
+### Technical Terms
+- **Tomato Style** (番茄风格): Fast-paced web fiction with dense cool points & hooks
+- **Cool Point** (爽点): Peak satisfaction moment (face-slap, show-off, reversal)
+- **OOC** (人设崩塌): Out Of Character behavior
 
 ---
 
@@ -199,6 +203,28 @@ SCENE_TYPES = {
         }
     }
 }
+
+# ========== "边界情况"的处理 ==========
+
+EDGE_CASES = {
+    "scene_has_no_dialogue": {
+        "check": "Is this solo_exploration or crisis_response?",
+        "action": "If yes → OK. If no → add dialogue or mark as low-dialogue scene"
+    },
+    
+    "cool_point_conflicts_with_goal": {
+        "check": "Does adding cool point break character logic?",
+        "action": "If yes → skip cool point. Literary goal > cool point."
+    }
+}
+
+# ========== 重写规则 ==========
+
+PARTIAL_REWRITE_RULES = {
+      "keep": ["plot_points", "key_dialogue", "scene_goal"],
+      "rewrite": ["descriptions", "transitions", "inner_monologue"]
+  }
+
 ```
 
 ### 1.2 Scene Type Identification | 场景类型识别
@@ -360,6 +386,7 @@ FUNCTION PLAN_CHAPTER(parsed_data):
         scene_plan.type = IDENTIFY_SCENE_TYPE(boundary.description, parsed_data)
         
         # 2.2 Set literary goal | 设定文学目标
+        # literary_goal != fancy_writing_style, literary_goal = reader_experience
         scene_plan.literary_goal = EXTRACT_LITERARY_GOAL(boundary, parsed_data)
         
         # 2.3 Generate dynamic constraints | 生成动态约束
@@ -465,6 +492,9 @@ FUNCTION PLAN_COOL_POINTS_BY_TENSION(scenes, parsed_data):
     RETURN cool_plan
 END FUNCTION
 
+
+
+
 FUNCTION CALCULATE_SCENE_TENSION(scene, parsed_data):
     """
     Calculate scene's dramatic tension value (0-100)
@@ -476,8 +506,26 @@ FUNCTION CALCULATE_SCENE_TENSION(scene, parsed_data):
     - Emotional intensity | 情绪激烈程度
     - Time pressure | 时间压力
     """
-    
+
+
+
+
+
     tension = 0
+
+
+
+// EXAMPLE:
+// Scene: "叶孤舟在黑市被云瑶挑衅"
+
+// tension = 0
+// tension += 40  // two_person_dialogue base
+// tension += 10  // goal contains "conflict"
+// tension += 10  // goal contains "face-slap"
+// tension += 15  // involves core mission? No, skip this
+// tension = 40 + 10 + 10 = 60
+
+// Result: Medium tension → arrange one cool point
     
     # Factor 1: Scene type base tension | 场景类型基础张力
     type_base_tension = {
@@ -493,7 +541,7 @@ FUNCTION CALCULATE_SCENE_TENSION(scene, parsed_data):
     goal = scene.literary_goal.LOWER()
     conflict_keywords = ["conflict", "confrontation", "crisis", "failure", "loss", "expose", "reversal"]
     conflict_count = SUM([1 FOR keyword IN conflict_keywords IF keyword IN goal])
-    tension += conflict_count * 10
+    tension += conflict_count * 10 // 场景目标包含'冲突'关键词 → conflict_count +1
     
     # Factor 3: Emotion intensity (extract from capsule §8) | 情绪强度（从胶囊§8提取）
     IF "emotions" IN parsed_data:
@@ -765,6 +813,9 @@ END FUNCTION
 ### 3.0.3 Reaction Functions | 反应类函数
 
 ```python
+
+// [personality_type]: str, choices=["cautious", "impulsive", "rational"]
+
 FUNCTION GENERATE_HESITATION_REACTION(protagonist, item, personality_type):
     """
     Generate physiological reaction for hesitation and probing
