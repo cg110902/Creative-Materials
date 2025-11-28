@@ -109,6 +109,142 @@ CONSTRAINT_LEVELS = {
 }
 ```
 
+
+### 0.5 Technical Metrics as Guardrails | 技术指标作为护栏
+```python
+"""
+Core Principle: Technical metrics (word count, dialogue ratio, paragraph length) 
+are GUARDRAILS, not GOALS. They exist to prevent common failure modes, 
+not to be mechanically satisfied.
+
+核心原则：技术指标（字数、对话占比、段落长度）是护栏，而非目标。
+它们的作用是防止常见的失败模式，而非机械地被满足。
+"""
+
+METRIC_CONSTRAINT_LEVELS = {
+    "HARD_LIMIT": {  # 硬限制：绝对不能违反
+        "priority": 0,
+        "action_on_violation": "CRITICAL_WARNING",
+        "examples": [
+            "Total word count exceeds ±30% of target (breaks pacing)",
+            "Single scene exceeds 1800 words (causes reader fatigue)",
+            "Dialogue ratio <10% in dialogue scene (violates scene type)"
+        ],
+        "tolerance": "0% - These are failure modes"
+    },
+    
+    "SOFT_TARGET": {  # 软目标：强烈建议遵守
+        "priority": 1,
+        "action_on_violation": "EXPLAIN_IN_REPORT",
+        "examples": [
+            "Scene word count deviates ±20% from capsule target",
+            "Hook interval exceeds 600 chars in tomato-style chapter",
+            "Dialogue ratio deviates ±10% from scene type baseline"
+        ],
+        "tolerance": "±20% - Acceptable if serves literary goal"
+    },
+    
+    "REFERENCE_VALUE": {  # 参考值：可根据需要调整
+        "priority": 2,
+        "action_on_violation": "LOG_NOTE",
+        "examples": [
+            "Paragraph length occasionally >150 chars for emotional turns",
+            "Info density slightly lower during cool point setup",
+            "Slightly fewer hooks in introspective solo scenes"
+        ],
+        "tolerance": "±50% - Adjust freely to serve narrative"
+    }
+}
+
+# ========== Decision Logic | 决策逻辑 ==========
+
+FUNCTION EVALUATE_METRIC_COMPLIANCE(scene_text, target_metrics, literary_goal):
+    """
+    Determine if metric deviation is acceptable
+    判断指标偏离是否可接受
+    """
+    
+    actual_metrics = CALCULATE_METRICS(scene_text)
+    deviations = COMPARE(actual_metrics, target_metrics)
+    
+    FOR EACH metric, deviation IN deviations:
+        constraint_level = GET_CONSTRAINT_LEVEL(metric)
+        
+        IF constraint_level == "HARD_LIMIT":
+            IF deviation > HARD_LIMIT.tolerance:
+                RETURN {
+                    "status": "CRITICAL_VIOLATION",
+                    "action": "MUST_REVISE",
+                    "reason": f"{metric} violates hard limit (deviation: {deviation})"
+                }
+            END IF
+        
+        ELSE IF constraint_level == "SOFT_TARGET":
+            IF deviation > SOFT_TARGET.tolerance:
+                # Check if deviation serves literary goal
+                IF SERVES_LITERARY_GOAL(scene_text, literary_goal, metric):
+                    RETURN {
+                        "status": "ACCEPTABLE_DEVIATION",
+                        "action": "EXPLAIN_IN_REPORT",
+                        "reason": f"{metric} deviates {deviation} to achieve: {literary_goal}"
+                    }
+                ELSE:
+                    RETURN {
+                        "status": "UNJUSTIFIED_DEVIATION",
+                        "action": "SHOULD_REVISE",
+                        "reason": f"{metric} deviates without clear literary benefit"
+                    }
+                END IF
+            END IF
+        
+        ELSE IF constraint_level == "REFERENCE_VALUE":
+            # Reference values are always acceptable to deviate
+            IF deviation > 0:
+                LOG(f"{metric} deviated {deviation}, noted for reference")
+            END IF
+        END IF
+    END FOR
+    
+    RETURN {"status": "COMPLIANT", "action": "PROCEED"}
+END FUNCTION
+
+# ========== When to Deviate | 何时可以偏离 ==========
+
+ACCEPTABLE_REASONS_TO_DEVIATE = [
+    "A cool point requires extended setup (±20% scene length)",
+    "Character personality demands unusually terse/verbose dialogue (±15% ratio)",
+    "Crisis scene needs rapid-fire short paragraphs (<100 chars)",
+    "Emotional turning point requires extended introspection (lower info density)",
+    "Avoiding OOC is more important than hitting dialogue ratio"
+]
+
+UNACCEPTABLE_REASONS_TO_DEVIATE = [
+    "Claude felt like writing more/less",
+    "Claude found it easier to write this way",
+    "Claude forgot to check the metrics",
+    "Claude prioritized technical compliance over literary quality"
+]
+
+# ========== Reporting Standard | 报告标准 ==========
+
+"""
+When delivering output, Claude must report metric deviations in this format:
+
+## 📐 Technical Metrics Report
+
+| Metric | Target | Actual | Deviation | Status | Justification |
+|--------|--------|--------|-----------|--------|---------------|
+| Word Count | 1200 | 1380 | +15% | ⚠️ SOFT | Extended cool point setup at 70% |
+| Dialogue % | 40-60% | 35% | -5% | ✅ OK | Solo exploration scene, within tolerance |
+| Hook Interval | <500 | 520 | +4% | ✅ OK | Emotional buildup required |
+
+**Deviations Summary**:
+- ⚠️ 1 soft target deviation (justified by literary goal)
+- ✅ All hard limits respected
+"""
+```
+
+
 ---
 
 ## §1 Scene Type System | Different Scenes, Different Approaches
