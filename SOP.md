@@ -521,41 +521,11 @@ ELSE:
 - Word Count: [actual]
 - Scene Count: [number]
 
-## 🎭 Literary Assessment
-### ⚠️ Issues Requiring Attention (if any)
-- [List P0 and P1 issues]
-
-### 📖 Reader Experience Prediction
-- Comprehension: ✅ Clear / ❌ May confuse
-- Visual Imagery: [score]/10
-- Emotion Curve: ✅ Has ups/downs / ⚠️ Flat
-
-## 🍅 Tomato Style Check
-### 💥 Cool Factor Score: [X]/10
-- Planned cool points: [list]
-- Delivered: ✅/⚠️
+---
 
 ### 🎣 Hook Density
 - [number] hooks / [total chars]
 - Average interval: [X] chars (standard ≤600)
-
-### 📊 Core Metrics
-| Metric | Current | Standard | Status |
-|--------|---------|----------|--------|
-| Dialogue Ratio | X% | 30-50% | ✅/⚠️ |
-| Info Density | X.XX | ≥0.01 | ✅/⚠️ |
-| Avg Paragraph | X chars | ≤150 | ✅/⚠️ |
-
-## 📐 Technical Reference (for info only)
-[Same table as above, but noted as reference not judgment criteria]
-
-## 🎬 Scene Breakdown
-**Scene 1** (type)
-- Goal: [literary goal]
-- Word Count: [actual]
-- Cool Point: [if any]
-
-[Repeat for each scene]
 
 ---
 
