@@ -725,6 +725,70 @@ ELSE:
 
 **Pro tip**: Vary pace within chapter. All-fast = exhausting. All-slow = boring.
 
+
+
+### 8.7 Sentence Rhythm & Flow | 句式节奏与流畅性 ⚠️ (**CRITICAL**)
+
+**Core Principle**: Great prose has rhythm. Think of it like music—you need variety in tempo to keep readers engaged.
+
+**The Pattern to Avoid**: 
+Be mindful of falling into a "staccato trap"—writing many consecutive short sentences that create a choppy, monotonous reading experience.
+
+```
+Watch out for this pattern:
+"He walked in. Door closed. Lights flickered. Something moved. He froze."
+
+This works for a brief crisis moment, but becomes exhausting if sustained.
+```
+
+**The Solution**: Conscious sentence length variation.
+
+Mix long, medium, and short sentences within each paragraph. This creates natural rhythm and prevents reader fatigue.
+
+**Practical Approach**:
+
+1. **After writing a paragraph**, scan it quickly:
+   - Are there 3+ consecutive sentences all under 10 words?
+   - Are all sentences roughly the same length?
+   - If yes to either → time to add variety
+
+2. **Combine strategically**:
+   - Join two short sentences with a comma, conjunction, or em-dash
+   - Add a descriptive clause to lengthen naturally
+   - Keep ONE short sentence for impact, extend the others
+
+3. **Respect the scene's natural rhythm**:
+   - Contemplative scenes → more long sentences
+   - Action scenes → more variety, with strategic short bursts
+   - Dialogue-heavy → medium sentences dominate, with short for emphasis
+
+**Example Revision**:
+
+```
+Before (monotonous):
+He looked at the map. Red lines covered it. Black dots marked nodes. The pattern was clear. He understood now.
+
+After (varied rhythm):
+He looked at the map, where red lines covered every inch of the yellowed paper like a spider's web. Black dots marked the nodes. The pattern became clear—and suddenly, he understood.
+
+(Sentence lengths: 22 words → 6 words → 15 words = natural flow)
+```
+
+**When Short Sentences Work**:
+- Crisis peaks (2-3 consecutive maximum)
+- Emphasizing a shocking revelation  
+- Rapid-fire tense dialogue
+- Character's fragmented thoughts during trauma
+
+**When to Extend**:
+- Descriptions (settings, characters, objects)
+- Explanations and reasoning
+- Emotional introspection
+- Establishing atmosphere
+
+**The Flexibility**:
+This isn't about hitting exact percentages. It's about **awareness**. If you notice yourself writing many sentences of similar length in a row, pause and add variation. Your prose will thank you.
+
 ---
 
 ## Appendix A: Quick Reference Cards
