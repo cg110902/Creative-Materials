@@ -378,6 +378,8 @@ scene_budget = total_budget / scene_count
 ### 4.1 The Main Loop | 主循环
 
 ```
+Here is the English translation of the workflow:
+
 1. PARSE CAPSULE
    ↓
 2. PLAN CHAPTER (scene types, budgets, cool points)
@@ -386,15 +388,15 @@ scene_budget = total_budget / scene_count
    ↓
 4. FOR EACH SCENE:
    ├─ Write scene
-   ├─ CHECK: 本场景是否为后续场景埋钉子？
-   │   └─ 是 → 标记"伏笔位置"，检查是否足够显眼
-   ├─ CHECK: 本场景是否回收前章伏笔？
-   │   └─ 是 → 对比原文，检查是否呼应
-   └─ 如果发现前文需要补充 → 记录到"待修正列表"
+   ├─ CHECK: Does this scene plant hooks for future scenes?
+   │   └─ Yes → Mark "Hook Location" and check if it is conspicuous enough.
+   ├─ CHECK: Does this scene payoff hooks from previous chapters?
+   │   └─ Yes → Compare with the original text to ensure resonance.
+   └─ If previous text needs additions → Record in "To-Be-Fixed List".
    ↓
-5. 章节完成后，检查"待修正列表"
-   ├─ 如果需要修正的地方≤2处 → 在报告中说明
-   └─ 如果需要修正的地方>2处 → 部分重写
+5. AFTER FINISHING CHAPTER, CHECK "TO-BE-FIXED LIST":
+   ├─ If items to fix ≤ 2 → Note it in the report.
+   └─ If items to fix > 2 → Partial rewrite.
    ↓
 6. LIGHT POLISH
    ↓
