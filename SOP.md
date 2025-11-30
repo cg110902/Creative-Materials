@@ -542,12 +542,7 @@ ELSE:
 ### 6.1 Required Report Sections | 必需报告内容
 
 ```markdown
-## 📊 Creation Summary
-- Status: ✅/⚠️/❌
-- Word Count: [actual]
-- Scene Count: [number]
 
----
 
 ### 🎣 Hook Density
 - [number] hooks / [total chars]
@@ -557,6 +552,8 @@ ELSE:
 
 ## 📝 New Facts
 [List facts in table format]
+Fact-XXX: [内容]  | 重要性🔴/🟡/🟢
+
 ```
 
 ### 6.2 Deviation Reporting | 偏差报告
