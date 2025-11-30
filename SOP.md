@@ -727,67 +727,81 @@ ELSE:
 
 
 
-### 8.7 Sentence Rhythm & Flow | 句式节奏与流畅性 ⚠️ (**CRITICAL**)
+### §8.7 Sentence Rhythm Control | 句式节奏控制 [MANDATORY] ⚠️
 
-**Core Principle**: Great prose has rhythm. Think of it like music—you need variety in tempo to keep readers engaged.
+**CRITICAL WRITING REQUIREMENT**:
 
-**The Pattern to Avoid**: 
-Be mindful of falling into a "staccato trap"—writing many consecutive short sentences that create a choppy, monotonous reading experience.
+**Rule**: NO MORE than 2 consecutive sentences under 10 words, UNLESS in crisis peak.
 
+**Self-Check During Writing** (not just polish):
 ```
-Watch out for this pattern:
-"He walked in. Door closed. Lights flickered. Something moved. He froze."
-
-This works for a brief crisis moment, but becomes exhausting if sustained.
-```
-
-**The Solution**: Conscious sentence length variation.
-
-Mix long, medium, and short sentences within each paragraph. This creates natural rhythm and prevents reader fatigue.
-
-**Practical Approach**:
-
-1. **After writing a paragraph**, scan it quickly:
-   - Are there 3+ consecutive sentences all under 10 words?
-   - Are all sentences roughly the same length?
-   - If yes to either → time to add variety
-
-2. **Combine strategically**:
-   - Join two short sentences with a comma, conjunction, or em-dash
-   - Add a descriptive clause to lengthen naturally
-   - Keep ONE short sentence for impact, extend the others
-
-3. **Respect the scene's natural rhythm**:
-   - Contemplative scenes → more long sentences
-   - Action scenes → more variety, with strategic short bursts
-   - Dialogue-heavy → medium sentences dominate, with short for emphasis
-
-**Example Revision**:
-
-```
-Before (monotonous):
-He looked at the map. Red lines covered it. Black dots marked nodes. The pattern was clear. He understood now.
-
-After (varied rhythm):
-He looked at the map, where red lines covered every inch of the yellowed paper like a spider's web. Black dots marked the nodes. The pattern became clear—and suddenly, he understood.
-
-(Sentence lengths: 22 words → 6 words → 15 words = natural flow)
+Every time you finish a paragraph → Count:
+- How many consecutive sentences are under 10 words?
+- If ≥ 3 → STOP. Combine at least 2 sentences NOW.
 ```
 
-**When Short Sentences Work**:
-- Crisis peaks (2-3 consecutive maximum)
-- Emphasizing a shocking revelation  
-- Rapid-fire tense dialogue
-- Character's fragmented thoughts during trauma
+**The Staccato Trap** (What Claude keeps doing):
+```
+❌ FORBIDDEN PATTERN:
+"He stood up. 
+Walked to window. 
+Saw the crowd. 
+They were angry. 
+He frowned."
 
-**When to Extend**:
-- Descriptions (settings, characters, objects)
-- Explanations and reasoning
-- Emotional introspection
-- Establishing atmosphere
+This is LAZY. This is MECHANICAL. This is THE COMFORT ZONE.
+```
 
-**The Flexibility**:
-This isn't about hitting exact percentages. It's about **awareness**. If you notice yourself writing many sentences of similar length in a row, pause and add variation. Your prose will thank you.
+**Required Pattern**:
+```
+✅ MANDATORY VARIATION:
+"He stood and walked to the window, where an angry crowd had gathered below, faces twisted with rage. 
+He frowned."
+
+(One long setup → One short impact = RHYTHM)
+```
+
+**Acceptable Ratio Per Paragraph**:
+- Long sentences (20+ words): 30-40%
+- Medium sentences (10-19 words): 40-50%  
+- Short sentences (5-9 words): 10-20%
+- Very short (1-4 words): 0-5% (crisis only)
+
+**How to Combine** (Specific Techniques):
+
+1. **Use conjunctions**: and, but, as, while, when
+   - "He ran" + "Door slammed" → "He ran as the door slammed behind him"
+
+2. **Use subordinate clauses**: where, which, who
+   - "Saw crowd" + "They were angry" → "Saw the crowd, whose faces were twisted with rage"
+
+3. **Use participial phrases**: 
+   - "He grabbed knife" + "She screamed" → "Grabbing the knife, he lunged as she screamed"
+
+4. **Use em-dashes for flow**:
+   - "Vision blurred" + "World tilted" → "His vision blurred—the world tilted"
+
+**Exception Protocol** (When short sentences ARE required):
+
+✅ Allowed: 2-3 consecutive short sentences ONLY at:
+- Peak crisis moment (life/death)
+- Character psychological break
+- Revelation shock
+
+Example:
+```
+"Pain exploded. Vision went white. He fell."
+(3 shorts at crisis peak = OK)
+
+But MUST follow with longer sentence:
+"When consciousness returned, he found himself sprawled on cold stone, every muscle screaming protest."
+```
+
+**Enforcement**:
+- If you catch yourself writing 3+ consecutive shorts → Delete and rewrite
+- No excuses of "but the scene is tense" → Tension comes from CONTENT, not choppy sentences
+- This is not a suggestion. This is a CRAFT REQUIREMENT.
+
 
 ---
 
