@@ -378,7 +378,6 @@ scene_budget = total_budget / scene_count
 ### 4.1 The Main Loop | 主循环
 
 ```
-Here is the English translation of the workflow:
 
 1. PARSE CAPSULE
    ↓
