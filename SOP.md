@@ -4,6 +4,11 @@
 **Design Philosophy**: Give direction, not path; Give constraints, not steps; Give standards, not algorithms.
 **设计哲学**：给方向不给路径，给约束不给步骤，给标准不给算法。
 
+**【🚨 CRITICAL: Artifact Prohibition】**
+❌ **DO NOT use Artifacts for any chapter content output**
+✅ **Output all chapter text directly in the conversation**
+**Reason**: Artifact system instability causes premature execution termination
+
 ---
 
 ## Glossary | 核心术语表
