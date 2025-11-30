@@ -382,22 +382,24 @@ scene_budget = total_budget / scene_count
    ↓
 2. PLAN CHAPTER (scene types, budgets, cool points)
    ↓
-3. PRE-DIAGNOSE PLAN (spot critical issues)
+3. PRE-DIAGNOSE PLAN
    ↓
 4. FOR EACH SCENE:
-   ├─ Select writing pattern by scene type
-   ├─ Write scene content
-   ├─ Check scene quality (P0-P1 issues)
-   ├─ Check Tomato style (hooks, cool points, info density)
-   └─ Fix critical issues immediately
+   ├─ Write scene
+   ├─ CHECK: 本场景是否为后续场景埋钉子？
+   │   └─ 是 → 标记"伏笔位置"，检查是否足够显眼
+   ├─ CHECK: 本场景是否回收前章伏笔？
+   │   └─ 是 → 对比原文，检查是否呼应
+   └─ 如果发现前文需要补充 → 记录到"待修正列表"
    ↓
-5. LIGHT POLISH (only obvious issues)
+5. 章节完成后，检查"待修正列表"
+   ├─ 如果需要修正的地方≤2处 → 在报告中说明
+   └─ 如果需要修正的地方>2处 → 部分重写
    ↓
-6. DIAGNOSE LITERARY QUALITY
+6. LIGHT POLISH
    ↓
-7. IF critical issues → INTELLIGENT REWRITE (targeted)
-   ELSE IF needs fix → APPLY FIXES
-   ELSE → DELIVER
+7. DIAGNOSE & DELIVER
+
 ```
 
 ### 4.2 Tomato Style Quality Check | 番茄风格检查
@@ -467,7 +469,7 @@ ELSE:
 ## §5 Quality Diagnosis | 质量诊断系统
 ## §5 文学性诊断
 
-### 5.1 The Three-Layer Check | 三层检查
+### 5.1 The Three-Layer Check | 四层检查
 
 **Layer 1: Reader Understanding (P1 Priority)**
 - Can reader follow WHO is WHERE doing WHAT?
@@ -485,6 +487,20 @@ ELSE:
 - OOC Check: Would this action surprise readers who know the character?
   - If yes + has good reason = character growth ✅
   - If yes + no reason = OOC ❌
+
+**Layer 4: 读者体验测试 (P2 Priority)**
+
+**测试方法**：Claude扮演首次阅读的读者，逐段回答以下问题：
+
+| 位置 | 测试问题 | 合格标准 |
+|------|---------|---------|
+| 前100字 | 我是否知道WHO/WHERE/WHEN？ | 必须知道 |
+| 前500字 | 我是否对接下来的剧情有期待？ | 必须有 |
+| 每500字 | 我是否想继续读下去？ | 80%以上回答"是" |
+| 高潮前 | 我是否能猜到结局？ | 如能猜到→需要加反转 |
+| 高潮时 | 我是否感到意外/爽/紧张？ | 必须有强烈情绪 |
+| 结尾 | 我是否想看下一章？ | 必须想 |
+  
 
 ### 5.2 Diagnostic Principles (Not Algorithms) | 诊断原则
 
@@ -732,6 +748,39 @@ ELSE:
 | counter_kill | Crisis scenes | 80-90% | Yes - need apparent defeat |
 | cognition | Any scene | 75-85% | High - need misdirection |
 | revenge | Emotional scenes | 70-80% | High - need prior grievance |
+
+**爽点轮换原则**：
+
+| 章节间隔 | 可重复度 | 说明 |
+|---------|---------|------|
+| 相邻章节 | 禁止重复 | 避免审美疲劳 |
+| 间隔1章 | 谨慎使用 | 需要有明显差异 |
+| 间隔2章+ | 可以重复 | 读者已经忘记了 |
+
+**爽点搭配建议**（避免同质化）：
+
+| 本章爽点 | 下章避免 | 下章推荐 |
+|---------|---------|---------|
+| face_slap (打脸) | counter_kill | cognition / show_off |
+| show_off (装逼) | face_slap | revenge / counter_kill |
+| counter_kill (反杀) | face_slap | cognition / show_off |
+| cognition (认知) | cognition | face_slap / revenge |
+| revenge (复仇) | revenge | show_off / cognition |
+
+**爽点的"层次升级"**：
+
+同一类型的爽点，后续章节要**升级规模**：
+```
+CH10: 打脸一个小角色
+CH15: 打脸一个重要配角
+CH20: 打脸反派本人
+```
+
+而不是：
+```
+CH10: 打脸反派
+CH15: 打脸小角色 ← 这就是降级，读者会失望
+```
 
 ### A3. Common Mistakes Checklist
 
