@@ -9,6 +9,9 @@
 
 ❌ **DO NOT use Artifacts for any chapter content output**
 
+❌ **DO NOT provide a writing report; only the chapter Text of the novel, facts, and hooks are required.**
+
+
 ✅ **Output all chapter text directly in the conversation**
 
 **Reason**: Artifact system instability causes premature execution termination
@@ -556,21 +559,6 @@ Fact-XXX: [内容]  | 重要性🔴/🟡/🟢
 
 ```
 
-### 6.2 Deviation Reporting | 偏差报告
-
-**If metrics deviate from targets**:
-
-```markdown
-## ⚠️ Metric Deviations
-
-| Metric | Target | Actual | Deviation | Justification |
-|--------|--------|--------|-----------|---------------|
-| Word Count | 2500 | 2847 | +13.9% | Cool point setup in scene 2 required extended dialogue |
-| Dialogue % | 35-45% | 42.3% | Within range | N/A |
-
-**Deviation Summary**:
-- All deviations justified by literary goals
-- No hard limits violated
 ```
 
 ---
@@ -869,6 +857,15 @@ CH15: 打脸小角色 ← 这就是降级，读者会失望
 - [ ] Each scene has clear literary goal?
 - [ ] Cool points feel earned (not forced)?
 - [ ] Ending has hook for next chapter?
+
+### A4. List of prohibited words
+
+- “笑了”（词汇）
+
+- “不是XX，是XX”（强行解释句式）
+- “不是XX。是XX”（强行解释句式，单独成段的也算）
+- “不对，是XX”（强行解释句式）
+- “XX没有回答/XX没有马上回答”（强行解释句式）
 
 ---
 
