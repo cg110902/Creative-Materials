@@ -5,8 +5,8 @@
 
 **设计哲学**：给方向不给路径，给约束不给步骤，给标准不给算法。
 
-
 ---
+  
 
 **【🚨 CRITICAL: Artifact Prohibition】**
 
