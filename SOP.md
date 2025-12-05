@@ -1,943 +1,563 @@
+# 📋 Claude Writing SOP v7.5 
 
-# 📋 Claude Writing Execution SOP v6.0 - Human Simulation System
-# Claude写作执行SOP v6.0 - 人类模拟系统
-
-**Design Philosophy**: Characters are not puppets. They are simulations of humans with working brains, bodies, and survival instincts.
-
-**设计哲学**：角色不是木偶。他们是有运转的大脑、身体和求生本能的人类模拟体。
+**核心哲学：写人话，别装逼，别当机器人**
 
 ---
 
-## §0 Core Principle: The Human Machine
-## §0 核心原则：人类机器
+## §0 给Claude的元认知警告
 
-### 0.1 What Makes Writing Feel "Fake"
+**⚠️ 在执行本SOP之前，必须理解：**
 
-**Fake writing happens when**:
-- Author controls character like a game character (press button → character does action)
-- Character's brain is **selectively smart** (knows what author needs them to know)
-- Character's body doesn't follow biology (no fatigue, pain is optional, injuries don't affect performance)
-- Character's emotions are **labeled** not **experienced** ("he felt sad" vs body actually responding to sadness)
+你不是在"执行程序"，你是在**模拟一个会讲故事的人**。
 
-**Real writing happens when**:
-- Character's brain runs its own simulation (limited information, makes mistakes, has blind spots)
-- Character's body has **physical state** (hunger, pain, exhaustion affects decisions)
-- Character's emotions are **physiological cascades** (fear = body response → brain interprets → action)
-- Character can be **interrupted** (plans fail, reactions are messy, surprises derail thinking)
+**真正会讲故事的人：**
+- 根据场景氛围调整节奏
+- 在平静时用长句，在紧张时用短句
+- 偶尔打破规则，因为那样更自然
+- **凭感觉写，不是套公式**
 
----
+**核心判断标准：读起来像人话吗？**
 
-### 0.2 The Human Operating System
-
-Every human runs on this stack:
-
-```
-Layer 5: PLANNING (slowest, first to shut down under stress)
-  ├─ Long-term goals
-  ├─ Social strategies  
-  └─ Abstract reasoning
-
-Layer 4: PROBLEM-SOLVING (moderate speed, requires focus)
-  ├─ "What does this mean?"
-  ├─ "What should I do?"
-  └─ Conscious decisions
-
-Layer 3: PATTERN RECOGNITION (fast, automatic)
-  ├─ "I've seen this before"
-  ├─ Familiar vs unfamiliar
-  └─ Expectations
-
-Layer 2: EMOTIONAL RESPONSE (very fast, involuntary)
-  ├─ Body sensations (gut clench, heart race)
-  ├─ Impulses (run, freeze, fight)
-  └─ Facial expressions
-
-Layer 1: SURVIVAL REFLEXES (instant, bypasses brain)
-  ├─ Flinch
-  ├─ Pain withdrawal
-  └─ Startle response
-```
-
-**CRITICAL RULE**: Under stress, higher layers **shut down**. 
-
-- Mild stress: Layer 5 offline, Layer 4 impaired
-- High stress: Layer 5-4 offline, Layer 3 impaired  
-- Extreme stress (life/death): Only Layer 2-1 functioning
-
-**This is not optional**. This is biology.
+如果你发现自己在机械执行规则 → 立刻停下，重新感受场景。
 
 ---
 
-### 0.3 Why Claude Writes Fake Humans
+## §1 什么叫"假"？什么叫"真"？
 
-**Claude's default behavior**:
-- Gives character perfect situational awareness (Layer 5 always online)
-- Character "realizes" things conveniently (serves plot, not psychology)
-- Emotions are labels ("felt afraid") not cascade effects
-- Body is scenery, not a system with state
+### 假的写法（烂俗标签）：
+❌ "他笑了"（在不该笑的时候）
+❌ "他感到恐惧"  
+❌ "他充满了愤怒"
+❌ "他陷入了沉思"
+❌ "泪水模糊了双眼"
+❌ "心如刀绞"
 
-**What we need to train**:
-- Track character's **information state** (what they actually know vs what author knows)
-- Track character's **physical state** (injuries, exhaustion, sensory overload)
-- Track character's **stress level** → determines which brain layers are online
-- Let character be **wrong, confused, and inefficient**
+**为什么假？**
+→ 这些是**作者的解读**，不是**角色的体验**。
+→ 读者看到这些词，立刻知道作者在偷懒。
+
+### 真的写法（身体反应）：
+✅ 他的手在抖
+✅ 他的拳头握紧了，指甲刺进肉里
+✅ 他盯着地面，一动不动
+✅ 他的呼吸变得急促
+
+**为什么真？**
+→ 这些是**可以看见的动作**，读者能自己脑补情绪。
 
 ---
 
-## §1 Character State Tracking
-## §1 角色状态追踪
+## §2 禁用词表（容易导致弃书）
 
-### 1.1 Before Writing Any Scene
+### 2.1 情绪标签类（高危，慎用）
 
-**Initialize character state variables**:
+**原则：不是"绝对禁止"，是"禁止滥用"**
 
-```python
-CHARACTER_STATE = {
-    # Physical
-    "injuries": [],  # "left leg fractured", "bleeding from forehead"
-    "exhaustion": 0-100,  # 0=fresh, 100=collapse imminent
-    "pain_level": 0-10,
-    "sensory_overload": 0-100,  # affects perception accuracy
-    
-    # Cognitive  
-    "stress_level": 0-100,  # determines which brain layers work
-    "available_layers": [1,2,3,4,5],  # which parts of brain are functioning
-    "focus_target": "immediate threat",  # what brain is locked onto
-    "confusion_level": 0-100,  # how much doesn't make sense
-    
-    # Information
-    "knows": [],  # facts character actually has
-    "assumes": [],  # things character thinks are true
-    "confused_about": [],  # active questions in their mind
-    "missed": [],  # things in environment they didn't notice
-}
+| 词汇 | 问题 | 什么时候能用 | 什么时候不能用 |
+|------|------|------------|--------------|
+| 笑（苦笑、惨笑、冷笑） | 万能标签，糊弄复杂情绪 | 日常场景、回忆中 | 刚经历生死、情绪极端时 |
+| 感到（感到恐惧/愤怒） | 告诉而非展示 | 尽量别用 | 任何时候都别用 |
+| 充满了（充满杀意/绝望） | 空洞，没有画面 | 永远别用 | 永远别用 |
+| 陷入了（陷入沉思/回忆） | 文青病 | 永远别用 | 永远别用 |
+
+**"笑"的使用指南：**
+
+✅ **可以用的情况：**
+```
+"小陈，别紧张。"队长笑了笑，拍了拍他的肩膀。
+（日常互动，自然）
+
+陈锋想起出发前，大家还在笑着打赌谁先找到化石。
+（回忆，合理）
 ```
 
-### 1.2 State Determines Behavior
-
-**DO NOT write action without checking state**:
-
+❌ **不能用的情况：**
 ```
-WRONG PROCESS:
-1. Plot needs character to notice detail
-2. Write "he noticed the symbol on the wall"
+陈锋看着队友的尸体，惨笑了一下。
+（刚经历生死，生理上笑不出来，出戏）
 
-RIGHT PROCESS:  
-1. Check: stress_level = 85 (extreme)
-2. Check: available_layers = [1, 2] (only reflexes + emotion)
-3. Check: focus_target = "the monster chasing me"
-4. Conclusion: Character CANNOT notice symbol
-5. Symbol remains in environment (maybe noticed later)
+他冷笑一声，"原来如此。"
+（装逼，不像人话）
 ```
 
-**Example**:
-
+✅ **不用"笑"的替代写法：**
 ```
-❌ FAKE:
-"陈锋在逃跑中注意到那些符号泛着荧光。"
-
-(Why fake? His stress_level=95, brain is in survival mode, 
-he can't spare processing power for curiosity)
-
-✅ REAL:
-"陈锋的视线扫过墙面——灰、土、黑、【某个亮的东西】——他没停下。"
-
-(He SAW it, but brain categorized as "not immediate threat" 
-and discarded. This is how human perception actually works)
+陈锋看着队友的尸体，嘴角动了动，最后什么都没说。
+（不用"笑"，但有动作，不生硬）
 ```
 
 ---
 
-### 1.3 Stress Level Effects (Mandatory Reference)
+### 2.2 文青病句式（全面禁用）
 
-| Stress | Available Layers | Behaviors | Prohibited Actions |
-|--------|------------------|-----------|-------------------|
-| 0-30 | All (1-5) | Can plan, analyze, notice details | None |
-| 31-60 | 1-4 | Focused problem-solving, less awareness of surroundings | Complex planning, multitasking |
-| 61-85 | 1-3 | Pattern-match only, "this is like X", automatic responses | Analysis, curiosity, abstract thought |
-| 86-100 | 1-2 | Pure reaction, no thinking | Everything except reflexes |
+❌ "仿佛..."
+❌ "宛如..."
+❌ "恍若..."  
+❌ "整个世界都..."
+❌ "时间仿佛静止"
 
-**Writing Requirement**: 
-
-Before character does ANYTHING cognitive (notices, realizes, decides), check their stress level. If action requires Layer 4+ but stress has shut it down → **rewrite the action**.
-
----
-
-## §2 The Body Is Not Scenery
-## §2 身体不是布景
-
-### 2.1 Injury = Permanent State Change
-
-**Once a character is injured, EVERY subsequent action is affected**.
-
-```python
-# Example: 陈锋 fractured his left leg at timestamp T=100
-
-# At T=101, 102, 103... T=999:
-# EVERY action must check:
-if action.requires_leg_mobility():
-    action.effectiveness *= 0.3  # 70% capability loss
-    action.pain_caused = 7  # pain spikes with movement
-    action.speed /= 3  # much slower
-```
-
-**Common mistake**:
-```
-❌ WRONG:
-"陈锋左腿骨折，他忍着痛继续跑..."
-[500字后]
-"陈锋跳过障碍物..."
-
-Problem: Forgot the injury. Body state didn't persist.
-```
-
-**Correct approach**:
-```
-✅ RIGHT:
-"陈锋左腿骨折，他拖着腿爬..."
-[500字后]  
-"障碍物。他只能绕。跳不了。"
-
-Every. Single. Action. Affected.
-```
+**为什么禁用？**
+→ 角色在生死关头，脑子不会生成诗句。
+→ 这些是作者在装文艺，不是角色的真实感受。
 
 ---
 
-### 2.2 Pain Is Not A Label
+## §3 怎么写情绪？
 
-**Pain is a signal that hijacks attention**.
+### 核心规则：只写身体，不写心理标签
 
-```
-❌ FAKE PAIN:
-"他的腿很疼，但他忍住了，继续观察敌人的动作。"
+| 想表达的情绪 | ❌ 错误写法 | ✅ 正确写法（多种选择） |
+|------------|-----------|---------------------|
+| 恐惧 | 他很害怕 | 他的腿在抖 / 他屏住了呼吸 / 他往后退了一步 |
+| 愤怒 | 他很生气 | 他的拳头握紧了，指甲刺进肉里 / 他咬紧牙关 |
+| 悲伤 | 他很伤心 | 他低着头，一句话都说不出来 / 他的眼睛红了 |
+| 震惊 | 他很震惊 | 他愣住了，嘴巴张着 / 他的手停在半空 |
+| 绝望 | 他绝望了 | 他跪在地上，头垂下去 / 他不动了，什么都不想做 |
 
-Why fake: Pain doesn't work like this. You can't just "忍住" and 
-continue complex observation. Pain FORCES attention to itself.
+**重要提醒：不要机械套用！**
 
-✅ REAL PAIN:
-"敌人在动——腿传来一阵钻心的痛——草——等等，敌人去哪了？"
+同样是"恐惧"，可以有十种写法：
+- 他的手抖了
+- 他咽了口唾沫
+- 他的腿不听使唤
+- 他想跑，但脚像钉在地上
+- 他的呼吸变得很急
+- 他的后背冒出冷汗
+- 他往后退了一步
+- 他的心跳得很快
+- 他的手抓紧了身边的东西
+- 他一动不敢动
 
-Pain interrupts. Focus breaks. Has to refocus. This is biology.
-```
-
-**Pain mechanics**:
-- Constant pain (5-6/10): Reduces available attention by 40%
-- Spike pain (7-8/10): Forces immediate attention, interrupts action
-- Extreme pain (9-10/10): Shuts down Layer 3-5, only reflexes remain
-
----
-
-### 2.3 Exhaustion Accumulates
-
-**Every physical action has a cost**.
-
-```python
-exhaustion_level = 0
-
-# Running 100m with fractured leg:
-exhaustion_level += 15
-
-# Climbing while bleeding:
-exhaustion_level += 20
-
-# When exhaustion > 80:
-available_layers = [1, 2]  # brain shutdown from exhaustion
-reaction_time *= 2  # everything slower
-```
-
-**Writing Rule**: If character has done intense physical activity for 3+ scenes, they MUST show exhaustion effects:
-
-- Vision narrowing
-- Breath ragged (affects speech)
-- Legs shaking
-- Decision-making impaired
-- Emotional control weakened (might cry, rage unexpectedly)
+**根据当时的具体情境，选最自然的那个。**
 
 ---
 
-## §3 Information Asymmetry: Character ≠ Author
-## §3 信息不对称:角色 ≠ 作者
+## §4 句子节奏指南（不是公式）
 
-### 3.1 The God View Problem
+### 4.1 长短句的节奏感
 
-**Author knows everything. Character doesn't.**
+**元原则：别机械执行，凭感觉写**
 
-```
-❌ WRONG:
-"陈锋看到了修仙者，意识到这是另一个文明。"
+| 场景类型 | 建议节奏 | 例子 |
+|---------|---------|------|
+| 平静观察 | 长句为主（70%），短句点睛（30%） | "天空是紫红色的，空气里有种奇怪的味道，像铁锈又像什么烧焦了。不对。" |
+| 日常对话 | 中等长度，自然停顿 | "队长说这次任务很简单，就是下去看看裂缝，采点样本就回来。" |
+| 紧张观察 | 长短交替（50-50），营造不安 | "陈锋盯着那个怪物。它没动。还在吃。他开始往后挪，一点一点，不敢出声。" |
+| 突发危机 | 短句为主（60%），中长句串联（40%） | "怪物转头了。陈锋的心跳停了一拍。草。跑！" |
+| 极度混乱 | 碎片化为主（70%），偶尔长句喘息（30%） | "爆炸——耳朵嗡嗡响——看不清——谁在喊？陈锋趴在地上，等了几秒才敢抬头。" |
 
-Why wrong: How does he "意识到"? His world model is:
-- Knows: Modern Earth, geology, physics
-- Doesn't know: Cultivation exists, other worlds exist
-
-Correct thought: "那特么是什么？特效？幻觉？"
-```
-
-**Character can only use what's in their knowledge base**:
-
-```
-陈锋's knowledge base:
-✅ Geology, Earth science
-✅ Military training (basic)
-✅ 21st century physics
-❌ Cultivation lore
-❌ Other dimensions  
-❌ Anything supernatural
-
-When he sees flying sword:
-- Brain searches knowledge base
-- Finds: No match
-- Output: Confusion, not understanding
-```
+**注意：这些百分比只是参考！不要真的去数！**
 
 ---
 
-### 3.2 Misinterpretation Is Mandatory
+### 4.2 什么时候用长句？
 
-**When humans see something they don't understand, they map it to closest known thing**.
+✅ **描述环境**：
+"森林很安静，只有风吹过树叶的沙沙声，偶尔有几声鸟叫，但听起来和地球上的鸟叫不太一样。"
 
-```
-✅ CORRECT:
-陈锋 sees 妖兽 → brain searches → finds: "wild boar" 
-→ labels it "巨型野猪" (WRONG label, but brain needs a label)
+✅ **角色在思考**：
+"陈锋想起队长说过的话，如果遇到危险就往回跑，但现在裂缝在哪他根本不知道。"
 
-Later: Gets closer → size doesn't match → brain error → 
-"不，那不是猪" → recategorizes to "我特么不知道那是什么"
-```
+✅ **回忆/闪回**：
+"他记得出发前，队长开玩笑说这次任务轻松得像郊游，大家都笑了，没人想到会变成这样。"
 
-**This is how human cognition works**:
-1. See unfamiliar thing
-2. Brain auto-maps to familiar category (often wrong)
-3. More data → mismatch detected → confusion
-4. Eventually: "I don't know what this is" (anxiety spikes)
-
-**Writing requirement**: Show this process. Don't let character instantly "know" what things are.
+✅ **角色在观察/分析**（不紧张时）：
+"那个怪物看起来像熊，但皮肤是鳞片，背上有骨刺，嘴巴能张得特别大。"
 
 ---
 
-### 3.3 Confusion Is A Physical State
+### 4.3 什么时候用短句？
 
-When something doesn't make sense, human body responds:
+✅ **突发事件**：
+"爆炸。"
 
-```
-confusion_level > 50:
-├─ Physiological: Dizziness, nausea, headache
-├─ Emotional: Anxiety, frustration, fear
-├─ Cognitive: Difficulty focusing, memory glitches
-└─ Behavioral: Freeze, retreat, or aggression
+✅ **强调重点**：
+"天是紫色的。不对。"
 
-confusion_level > 80:
-└─ Dissociation risk (brain gives up trying to understand)
-```
+✅ **情绪高峰**：
+"跑。必须跑。现在。"
 
-**Example**:
-```
-❌ FAKE:
-"陈锋看到紫红色的天空，感到困惑。"
-
-✅ REAL:
-
-他看向手表——指针在乱转。看向天——还是紫的。"
-
-(Confusion = body trying to reject impossible information)
-```
+✅ **角色的碎片思维**（极度紧张时）：
+"怪物。太近了。跑不掉。"
 
 ---
 
-## §4 Emotion Is Not A Label
-## §4 情绪不是标签
+### 4.4 长短句混搭实战示例
 
-### 4.1 Emotion = Physiological Cascade
+**场景：陈锋逃跑，腿受伤，后面有怪物追**
 
-**Emotions are body-first, interpretation-second**.
-
+❌ **机械套用短句（像机器人）**：
 ```
-WRONG MODEL:
-Brain thinks "I'm in danger" → Feels fear → Body responds
-
-CORRECT MODEL:  
-Stimulus → Body responds (heart races, breath shallow) 
-→ Brain interprets body state → Labels it "fear"
+陈锋在跑。
+腿很痛。
+怪物在后面。
+很近。
+他很怕。
 ```
 
-**Writing implication**:
-
+❌ **机械套用长句（喘不过气）**：
 ```
-❌ NEVER WRITE:
-"他感到恐惧。"
-"她很伤心。"  
-"他非常愤怒。"
-
-✅ ALWAYS WRITE:
-"他的心跳在喉咙里。" (body state)
-"她的视线模糊了。" (body state)  
-"他的拳头握紧，指甲刺进掌心。" (body state)
-
-Reader's brain will label the emotion. You don't need to.
+陈锋拖着断了的腿在森林里奔跑，每一步都痛得他想叫出来，但他不敢叫，因为怪物就在后面追着，距离越来越近，他能听到怪物沉重的脚步声，还有那种低沉的吼声。
 ```
+
+✅ **自然节奏（长短结合）**：
+```
+陈锋在跑，腿每迈一步都像有刀子在割，但他不敢停。
+
+后面的脚步声越来越近。
+
+他回头看了一眼——怪物距离他不到二十米了。
+
+草。
+
+他加速，腿一软，差点摔倒，扶着树才稳住。
+
+不行，跑不过它。
+```
+
+**为什么第三版好？**
+- 有长句营造氛围（"腿每迈一步都像有刀子在割"）
+- 有短句制造紧张（"草"）
+- 有中等句子推进情节
+- 读起来有呼吸感，不是一口气说完，也不是机关枪
 
 ---
 
-### 4.2 Emotional Contagion
+## §5 怎么写对话？
 
-**Emotions spread through physical presence**.
+### 核心规则：人话，别演讲
 
-If character A is terrified:
-- Breathing changes (other characters hear it)
-- Body language changes (other characters see it)
-- Voice changes (pitch, pace, tremor)
+❌ **假对话（像念稿）**：
+"我认为我们应该撤退，因为敌人太强大了，继续战斗只会白白送死。"
 
-Character B will **automatically mirror** some of this (mirror neurons).
-
-**Writing rule**: In group scenes, emotions ripple:
-
-```
-✅ REAL:
-"小王的枪声停了。老赵回头——小王在发抖。
-老赵的手也开始抖。"
-
-(Fear spreads non-verbally, faster than conscious thought)
-```
-
----
-
-### 4.3 Emotion Overrides Cognition
-
-**When emotion intensity > 70%, Layers 4-5 shut down**.
-
-```
-Fear 80% → Can't think strategically
-Rage 85% → Can't consider consequences  
-Grief 90% → Can't form complex thoughts
-
-Available actions: Reflexive, instinctive, pattern-based only
-```
-
-**Example**:
-```
-❌ FAKE:
-"陈锋极度恐惧,但他冷静地分析了逃跑路线。"
-
-(Impossible. Can't be "极度恐惧" and "冷静分析" simultaneously.
-Pick one: Either fear is moderate, or analysis is impossible)
-
-✅ REAL:
-"陈锋在跑。不知道往哪跑。就是跑。"
-
-(Fear 95% = no planning, pure motor execution)
-```
-
----
-
-## §5 Perception Is Filtered
-## §5 感知是被过滤的
-
-### 5.1 Attention Is A Spotlight
-
-**Human can only consciously process ~1 thing at a time**.
-
-```
-focus_target = "monster"
-
-Environment contains:
-- Monster (IN FOCUS - high detail)
-- Trees (peripheral - low detail, just "brown blur")  
-- Sky color (NOT PROCESSED - attention not allocated)
-- Ground texture (NOT PROCESSED)
-- Distant sounds (NOT PROCESSED)
-```
-
-**Writing rule**: 
-
-When character is focused on X, they CANNOT simultaneously notice Y in detail.
-
-```
-❌ WRONG:
-"陈锋盯着妖兽，同时注意到队友脸上的表情，
-还看到了天空的颜色异常。"
-
-(Brain doesn't work like this. Focus = tunnel vision)
-
-✅ RIGHT:
-"陈锋盯着妖兽。有人在喊——谁？——没时间转头。"
-
-(Hearing detected, but can't process content while maintaining visual focus)
-```
-
----
-
-### 5.2 Memory Is Unreliable
-
-**Under stress, memory encoding fails**.
-
-```
-stress_level > 70:
-└─ Short-term memory impaired
-    ├─ Events blur together  
-    ├─ Time estimation broken
-    └─ Details lost
-
-stress_level > 90:
-└─ Memory fragmentation
-    └─ Later recall: "I remember X... then... suddenly Y"
-        (Missing the middle - brain never recorded it)
-```
-
-**Writing implication**:
-
-If character experienced high-stress event, they CANNOT have perfect recall:
-
-```
-✅ REAL:
-"陈锋试图回想——李工是怎么死的？剑光？
-还是枪声？还是先看到剑？特么的，记不清了。"
-
-(This is normal. Traumatic memories are fragmented)
-```
-
----
-
-### 5.3 Sensory Overload Causes Dropout
-
-**When too much is happening, brain drops inputs**.
-
-```
-sensory_overload > 80:
-├─ Visual: Sees movement but not details
-├─ Auditory: Hears noise but can't distinguish sources  
-├─ Tactile: Numbness or hypersensitivity (random)
-└─ Integration: Can't combine senses (see explosion, don't hear it)
-```
-
-**Example**:
-```
-✅ REAL:
-"爆炸——陈锋看到火光，但没听到声音。
-耳朵在响。是耳鸣！草,听不见了。"
-
-(Sensory dropout during overload. Realistic)
-```
-
----
-
-## §6 Dialogue = Incomplete Thoughts
-## §6 对话 = 不完整的想法
-
-### 6.1 People Don't Speak In Essays
-
-**Humans speak in fragments, not finished thoughts**.
-
-```
-❌ FAKE DIALOGUE:
-"我认为我们应该撤退,因为敌人太强,
-而且我们的弹药不足,继续战斗是不理智的。"
-
-(No human talks like this under stress)
-
-✅ REAL DIALOGUE:
+✅ **真对话（碎片化）**：
 "撤！"
-"弹药——"  
-"草,撤！"
+"可是——"
+"来不及了！快！"
 
-(Incomplete, interrupted, urgent)
+### 对话的节奏规律：
+
+**平时/不紧急：**
+- 可以说完整句
+- 可以解释原因
+```
+"我们得走了。"队长说。
+"为什么？设备还没收好。"
+"来不及了，我听到奇怪的声音，先撤。"
 ```
 
----
-
-### 6.2 Subtext > Text
-
-**Most important communication is non-verbal**.
-
+**紧急时刻：**
+- 句子变短
+- 可能说一半就断
+- 会重复
 ```
-✅ REAL:
-"没事。"他转身就走。
-
-(Says "没事", body says "我不想谈". Reader gets both messages)
-
-❌ FAKE:
-"没事。"他说,但语气里充满了愤怒。
-
-(Don't label the subtext. Show it through action)
-```
-
----
-
-### 6.3 People Interrupt & Overlap
-
-```
-✅ REAL:
-"我们得——"
-"没时间了！"
-"听我说——"  
+"快！"
+"可是——"
+"别管了！快跑！"
+"队长——"
 "跑！"
+```
 
-❌ FAKE:
-"我们得想办法。"
-"是的,但现在没时间了。"
-"那我们——"
-"快跑！"
+**极度紧急：**
+- 只有单字或叠词
+- 甚至说不出话，只有动作
+```
+"跑！"
+"啊——"
+（或者干脆不说话，直接写动作："队长拽着陈锋的胳膊，往外冲。"）
+```
 
-(Too polite. Too turn-taking. Not how panicked humans talk)
+### 对话黄金法则：
+
+1. **紧张场景：一句话不超过15个字**
+2. **可以被打断**（被爆炸/被攻击/情绪激动）
+3. **可以重复**（"快快快！"比"请快一点"真实）
+4. **可以说不完整**（"我——算了，没事。"）
+
+---
+
+## §6 怎么写动作？
+
+### 核心规则：具体，别概括
+
+❌ **假动作（太抽象）**：
+"他快速躲开了攻击"
+
+✅ **真动作（能看见细节）**：
+"他往旁边一滚，肩膀撞到石头"
+
+### 动作写作公式：
+
+**动作 = 身体部位 + 具体移动 + 碰到什么/效果**
+
+例子：
+- "他跑" → "他的腿在动，踩着泥地，溅起水"
+- "他抓住剑" → "他的手握住剑柄，指节发白"
+- "他倒下" → "他的膝盖先着地，然后整个人趴下"
+- "他站起来" → "他撑着地，试了两次才站稳"
+
+**注意：不是每个动作都要这么详细！**
+- 重要动作/第一次出现的动作 → 详细写
+- 重复动作/次要动作 → 简单带过
+
+---
+
+## §7 怎么写痛？
+
+### 核心规则：痛会打断一切
+
+❌ **假的痛：**
+"他的腿很痛，但他忍住了，继续前进"
+（痛不是可以"忍住就没事"的）
+
+✅ **真的痛：**
+"他想跑——腿一阵剧痛——草——摔了"
+（痛会打断动作、打断思考）
+
+### 痛的等级：
+
+| 等级 | 描述 | 角色能做什么 | 不能做什么 |
+|------|------|------------|-----------|
+| 1-3分（轻痛） | 疼但能忍 | 正常行动，速度变慢，皱眉 | 无 |
+| 4-6分（中痛） | 很疼 | 能行动，但要停下来喘气，咬牙，冒冷汗 | 不能集中注意力做复杂的事 |
+| 7-9分（重痛） | 剧痛 | 只能做简单动作（爬、扶墙），会叫出声 | 不能思考，不能说完整的话 |
+| 10分（极痛） | 痛到极限 | 什么都做不了，或者直接晕过去 | 一切 |
+
+### 痛的持续影响：
+
+**错误思维**：写一次痛 → 后面忘了
+
+**正确思维**：受伤后，每个动作都要考虑
+
+**例子：腿骨折后**
+```
+【第一次写痛】：
+他的腿断了。骨头刺进肉里，每动一下都像有刀子在割。
+
+【之后通过动作体现，不用每次都说"痛"】：
+他扶着墙，一步一步往前挪。（不用说痛，读者知道）
+他想蹲下捡东西，刚弯腰，腿一软，差点摔倒。（痛导致的后果）
+
+【偶尔，痛加剧时再强调】：
+他跳过一块石头，落地的瞬间，腿传来撕裂般的痛，他咬紧牙关才没叫出来。
 ```
 
 ---
 
-## §7 Scene Writing: Simulation Mode
-## §7 场景写作：模拟模式
+## §8 怎么写受伤？
 
-### 7.1 Before Writing: Boot Character
+### 核心规则：受伤 = 永久状态
 
+**受伤后，之后每个动作都受影响**
+
+| 受伤部位 | 影响的动作 |
+|---------|-----------|
+| 腿骨折 | 走路（一跳一跳）、跑步（跑不了）、蹲下（只能单腿跪）、跳跃（不可能） |
+| 手受伤 | 抓东西（握不紧）、攀爬（爬不了）、开枪（瞄不准） |
+| 肋骨断 | 呼吸（会痛）、说话（说不了长句）、弯腰（弯不下去） |
+| 失血过多 | 头晕、视线模糊、动作变慢、最后可能晕倒 |
+
+### 写作检查清单：
+
+角色受伤后，每写一个动作，问自己：
+**"这个动作需要用到受伤的部位吗？"**
+- 如果需要 → 必须写出影响
+- 如果不需要 → 可以不提
+
+---
+
+## §9 怎么写死亡？
+
+### 核心规则：第一次看到死人，不可能冷静
+
+**人看到死人的真实反应（分阶段）：**
+
+**阶段1：拒绝（0-3秒）**
+- 脑子不接受："这是假的"、"这不是真的"
+- 这是自动反应，不是角色在骗自己
+
+**阶段2：身体反应（3-10秒）**
+- 想吐、腿软、手抖
+- 可能真的吐出来
+- 这是生理反应，控制不了
+
+**阶段3：情绪爆发或麻木（10-30秒）**
+- 要么哭、要么愣住、要么跑
+- 不会立刻"振作起来继续任务"
+
+**阶段4：事后（几小时到几天）**
+- 才会有悲伤、愤怒、内疚
+- 不是当场就有这些情绪
+
+❌ **假的死亡场景**：
+"他看到队友死了，悲痛万分，但他知道现在不是伤心的时候，必须振作起来。"
+（不可能这么快"振作"）
+
+✅ **真的死亡场景**：
 ```
-INITIALIZATION:
-1. Load character knowledge base
-2. Set physical state (injuries, exhaustion, pain)
-3. Set stress level → determine available brain layers
-4. Set focus target (what they're paying attention to)
-5. Load immediate environment (only what they can perceive)
+李工的肠子流出来了。
 
-NOW: Simulate forward.
+陈锋看着，脑子一片空白。
+
+"假的。"
+
+但肠子还在动。
+
+陈锋扭头就吐。
 ```
 
 ---
 
-### 7.2 Writing = Reporting Simulation
+## §10 角色怎么"聪明"？
 
-**You are not creating actions. You are observing them**.
+### 核心规则：聪明 ≠ 全知
 
+❌ **假聪明（角色有剧透）**：
+"他意识到这是修仙界"
+"他发现了对方的弱点"
+
+✅ **真聪明（基于已知信息推理）**：
+"那个人站在剑上飞——不对，剑在飞，他站在上面——这特么是什么技术？反重力？"
+
+### 角色认知的真实过程：
+
+1. **看到不懂的东西**
+2. **脑子搜索：这是什么？**
+3. **找到最接近的已知事物**（通常是错的）
+4. **先给一个标签**（即使错了，脑子也需要标签）
+5. **有更多信息后，发现不对**
+6. **困惑、修正、或者放弃理解**
+
+**例子：**
 ```
-PROCESS:
-1. Input arrives (stimulus)
-2. Character's current state processes it
-3. Output emerges (action/reaction)  
-4. Write what happened
-
-NOT:
-1. Plot needs character to do X
-2. Make character do X
-3. Justify why they did X
+陈锋看到妖兽：
+→ 脑子搜索：这是什么动物？
+→ 找到：像熊
+→ 标签：巨型熊（错的，但脑子需要标签）
+→ 走近一看：不对，熊没有鳞片
+→ 重新标签：我不知道这是什么（恐惧增加）
 ```
+
+**写出来：**
+"那是什么？熊？陈锋看着那个东西。不对，熊没有鳞片。那是——他不知道那是什么。"
 
 ---
 
-### 7.3 Simulation Rules
+## §11 场景写作流程（防止机械化）
 
-**Rule 1: Character can only respond to inputs they received**
+### 步骤1：先别想规则，先想画面
 
-```
-Available inputs:
-✅ What they see (in current focus cone)
-✅ What they hear (if attention available)
-✅ What they feel (body sensations)
-✅ What they remember (if recall successful)
+闭上眼睛，想象这个场景：
+- 你看到了什么？
+- 听到了什么？
+- 角色在做什么？
+- 角色的身体状态如何？（累吗？痛吗？怕吗？）
 
-NOT available:
-❌ What author knows
-❌ What other characters are thinking
-❌ Information not yet revealed
-```
-
-**Rule 2: Response emerges from current state**
-
-```
-stress=90, pain=8, exhaustion=75, focus="escape"
-
-Input: "队友在喊他的名字"
-Processing: 
-- Auditory input detected
-- But focus locked on escape route
-- Brain categorizes voice as "background noise"
-- No response generated
-
-Output: 陈锋继续跑，没听到。
-
-(Not ignoring teammate. Brain literally didn't process the input)
-```
-
-**Rule 3: Let simulation surprise you**
-
-```
-If you planned: "Character calmly explains the situation"
-
-But simulation shows: stress=85, available_layers=[1,2,3]
-
-Then: Character CANNOT calmly explain. Layer 4 (problem-solving) 
-is offline. Character can only give fragmented reactions.
-
-→ Throw out your plan. Write what simulation shows.
-```
+**把脑海里的画面用最自然的方式描述出来。**
+**先写，别管规则。**
 
 ---
 
-## §8 Anti-Patterns: What Triggers Fakeness
-## §8 反模式：什么会触发假感
+### 步骤2：写完第一遍后，再检查
 
-### 8.1 The Omniscient Character
+不要边写边套规则！先写完，再回头看：
 
-```
-❌ TRIGGERS:
-"他意识到这是陷阱。"
-"她明白了对方的意图。"  
-"他发现了隐藏的线索。"
+**情绪检查**：
+- [ ] 有没有用"感到"、"充满"、"陷入"？
+- [ ] 有没有在不合时宜的地方用"笑"？
+- [ ] 所有情绪都是通过身体反应展现的吗？
 
-WHY FAKE: Character suddenly has author's god-view.
+**动作检查**：
+- [ ] 每个重要动作都具体吗？
+- [ ] 受伤的影响持续存在吗？
+- [ ] 疼痛有打断行动吗？
 
-FIX: Show the actual thought process:
-"等等——为什么门开着？"
-"他刚才看我的眼神... 草，他早就知道了。"
-"墙上有刮痕。新的。有人来过。"
-```
+**对话检查**：
+- [ ] 每句话都像人话吗？（不像演讲稿）
+- [ ] 紧张场景的对话够短吗？
 
----
-
-### 8.2 The Emotion Label
-
-```
-❌ TRIGGERS:
-"他感到X"
-"她充满了Y"
-"他的心情是Z"
-
-WHY FAKE: Emotions are body states, not labels.
-
-FIX: Show physiological response:
-"他的手在抖。"
-"她的视线模糊了。"
-"他的呼吸急促起来。"
-```
+**节奏检查**：
+- [ ] 句子长短是否自然？（读出来顺不顺）
+- [ ] 有没有机械重复同一种句式？
 
 ---
 
-### 8.3 The Convenient Realization
+### 步骤3：最终测试 - "人话测试"
 
-```
-❌ TRIGGERS:
-"突然,他想到了一个办法。"
-"这时她发现了关键信息。"
+**大声读出来。**
 
-WHY FAKE: Plot-serving timing. Brain doesn't work on plot schedule.
-
-FIX: Show trigger → recognition:
-"他的手碰到口袋——打火机——等等——"
-"那个符号——她在哪见过？——对了，昨天的报告——"
-```
+- 如果听起来像机器人 → 重写
+- 如果听起来像正常人在讲故事 → 通过
+- 如果听起来像在背课文 → 重写
+- 如果听起来像朋友在跟你聊天 → 完美
 
 ---
 
-### 8.4 The Painless Injury
+## §12 Claude自检清单（防自作聪明）
 
-```
-❌ TRIGGERS:
-"他的腿断了,但继续战斗。"
-"她忍着伤痛,保持冷静。"
+写完每一段后，问自己：
 
-WHY FAKE: Pain doesn't pause for heroism.
+### 检查1：我是在讲故事，还是在套公式？
+- 如果你在想"这里该用短句" → **停下**，重新感受场景
+- 如果脑子里有画面，手自然地打字 → 对了
 
-FIX: Pain intrudes constantly:
-"他挥拳——腿传来撕裂般的痛——草——拳头偏了。"
-"她深呼吸,试图集中——伤口在烧——特么的——集中不了。"
-```
+### 检查2：句子节奏自然吗？
+- 大声读出来
+- 如果听起来像顺口溜 → 不自然，重写
+- 如果听起来像在聊天 → 自然，通过
 
----
+### 检查3：有没有机械重复？
+- 连续三句都用同一个结构（"他XXX"） → 改
+- 每次情绪都用同一种身体反应（都是"手抖"） → 换一个
 
-### 8.5 The Literary Observation
+### 检查4：符合人物状态吗？
+- 角色现在害怕到什么程度？
+- 如果是"吓得要死"，还能说完整的长句吗？
+- 如果是"有点紧张"，会说得那么碎吗？
 
-```
-❌ TRIGGERS:  
-"天空像..."
-"空气中弥漫着某种..."
-"仿佛..."
-
-WHY FAKE: Character became a poet. Brain in crisis mode doesn't generate metaphors.
-
-FIX: Raw perception:
-"天空是紫色的。"
-"很不对劲。"
-```
+### 检查5：我有打破规则吗？
+- 如果你100%遵守了所有规则 → 可能太机械了
+- 如果你偶尔打破规则，但读起来更自然 → 好的
 
 ---
 
-## §9 Quality Check: The Human Test
-## §9 质量检查：人类测试
+## §13 最重要的元规则
 
-### 9.1 After Writing Each Scene
+**所有规则都可以打破，只要打破后更自然。**
 
-Run these tests:
+### SOP的作用是：
+✅ 提醒你别犯低级错误（滥用"笑"、情绪标签、文青病）
+✅ 提供方向性指导（紧张时偏短句）
+✅ 提供检查清单
 
-#### Test 1: Information Audit
-```
-For each fact character "knows":
-- How did they learn it?  
-- Did they have attention available when info appeared?
-- Did their brain have capacity to process it?
+### SOP不是：
+❌ 必须100%执行的代码
+❌ 限制你创作的枷锁
+❌ 让你变成写作机器人的模板
 
-If you can't answer → Character doesn't actually know it → Rewrite
-```
+### 终极判断标准：
 
-#### Test 2: Body Continuity
-```
-List all injuries/exhaustion at scene start.
-Check: Is EVERY action affected by this state?
+**只有一个标准：读起来像人话吗？**
 
-If any action ignores body state → Rewrite
-```
-
-#### Test 3: Stress-Layer Match
-```
-Character's stress level = ?
-Available brain layers = ?  
-Character's actions in scene = ?
-
-Do actions require layers that are offline?
-If yes → Rewrite (character can't do that)
-```
-
-#### Test 4: The Surprise Test
-```
-Did character do something that surprised you while writing?
-
-If yes → Good sign (simulation running)
-If no → Bad sign (you're puppeting them)
-```
+- 像人话 → 正确
+- 不像人话 → 重写
+- 不管你遵守了多少规则，只要不像人话 → 重写
 
 ---
 
-### 9.2 The Ultimate Test: Be The Character
+## §14 实战速查表
 
-```
-Close eyes.
-Imagine you are the character.
-You have their injuries, exhaustion, fear, confusion.
-You know ONLY what they know.
+### 场景类型 vs 写法速查
 
-Now: Would you actually do what they did in the scene?
-Or would you be too scared/tired/confused?
-
-If honest answer is "I'd probably just freeze" 
-→ That's what character should do
-```
-
----
-
-## §10 Execution Checklist
-## §10 执行清单
-
-### Before Writing
-
-- [ ] Initialize character state (physical, cognitive, emotional)
-- [ ] Determine stress level → available brain layers
-- [ ] List what character knows vs what author knows
-- [ ] Set focus target (what has their attention)
-- [ ] Load only perceivable environment
-
-### During Writing  
-
-- [ ] Every action: Check if character's state allows it
-- [ ] Every realization: Show trigger → thought process
-- [ ] Every emotion: Write body response, not label
-- [ ] Every injury: Affects ALL subsequent actions
-- [ ] Every input: Filter through attention/stress
-
-### After Writing
-
-- [ ] Information audit (how did they learn each fact?)
-- [ ] Body continuity check (injuries still matter?)
-- [ ] Stress-layer match (actions match available cognition?)
-- [ ] Zero emotion labels? (all shown through body?)
-- [ ] Character surprised you at least once?
+| 我要写的场景 | 重点 | 避免 |
+|------------|------|------|
+| 平静观察/描述环境 | 长句为主，细节丰富 | 别突然来一堆短句 |
+| 日常对话 | 自然停顿，中等长度 | 别太文绉绉 |
+| 角色思考/回忆 | 可以用长句，展开思路 | 别变成心理分析报告 |
+| 紧张场景 | 长短交替，营造不安 | 别全是短句，也别全是长句 |
+| 突发危机 | 短句增多，但要有长句串联 | 别变成"电报体" |
+| 战斗/追逐 | 碎片化增加，但保留喘息 | 别每句都只有三个字 |
+| 角色受伤 | 持续影响所有动作 | 别写一次就忘了 |
+| 角色看到死亡 | 生理反应先于情绪 | 别让角色立刻"振作" |
 
 ---
-
-## §11 Special Case: The First Death Scene
-## §11 特殊案例：第一次目击死亡
-
-Since CH1 involves watching teammates die, here's the human response model:
-
-### 11.1 First-Time Death Witness Response
-
-**Stage 1: Cognitive Rejection (0-3 seconds)**
-```
-Brain refuses to process what eyes see.
-"那是特效。假的。"
-Denial is automatic, not a choice.
-```
-
-**Stage 2: Physiological Cascade (3-10 seconds)**
-```
-Body overrides brain:
-- Adrenaline dump (time dilation, tunnel vision)
-- Nausea (vomit reflex activates)
-- Legs weaken (blood redirects to core)
-- Breathing stops (freeze response)
-```
-
-**Stage 3: System Crash (10-30 seconds)**
-```
-If stress > 95:
-- Dissociation (feels unreal, watching from outside body)
-- Auditory exclusion (sound cuts out)
-- Memory fragmentation (won't remember clearly later)
-
-Character is NOT in control. Autopilot takes over.
-```
-
-**Stage 4: Survival Override (30+ seconds)**
-```
-Hindbrain takes control:
-- Run (if escape route visible)
-- Freeze (if no clear escape)
-- Fight (if cornered)
-
-No planning. Pure reflex.
-```
-
----
-
-### 11.2 Writing Rules For Death Scenes
-
-```
-❌ NEVER:
-"他看到队友死了,悲痛欲绝,但强迫自己继续任务。"
-
-(Impossible sequence. Can't jump from "悲痛欲绝" to "理性执行任务")
-
-✅ ALWAYS:
-Show the stages:
-1. Denial: "不是真的"
-2. Body crash: (vomiting, shaking)
-3. Dissociation: "这不是在发生"  
-4. Autopilot: (running, no thoughts)
-
-Grief comes LATER (hours/days), not immediately.
-```
-
----
-
-## §12 Final Principle: Trust The Simulation
-## §12 最终原则：相信模拟
-
-**When simulation and plot conflict**:
-
-```
-IF: Plot needs character to do X
-BUT: Simulation shows character would do Y (because of their state)
-
-THEN: Let character do Y.
-
-Change the plot. Don't break the character.
-```
-
-**Why?**
-
-Readers have human brains. They run unconscious simulations of characters. When your character breaks human rules, reader's simulation errors out → "fake feeling".
-
-Your job: Make the simulation run smoothly in reader's brain.
-
-**How?**
-
-Stop writing what you want to happen.
-Start writing what would actually happen.
-
----
-
-**END OF SOP v6.0**
-
